@@ -29,17 +29,24 @@
       <h2 class="text-2xl text-center font-semibold">Acciones</h2>
     </div>
     <ul class="space-y-16 m-4 ">
+      
       <form method="POST" action="?/analyze" use:enhance>
         <li>
           <input type="hidden" name="code" value={$dataContext.editorText} />
+          <button  class="w-full py-4 px-6 text-lg font-semibold rounded-lg mb-10 bg-green-500 hover:bg-green-800">
+            COMPILAR
+          </button>
+        </li>
+        <li>
+          <input type="hidden" name="code" value={$dataContext.editorText} />
           <button  class="w-full py-4 px-6 text-lg font-semibold rounded-lg bg-green-500 hover:bg-green-800">
-            EJECUTAR
+            OPTIMIZAR
           </button>
         </li>
       </form>
       <li>
         <button  on:click={setModal} class="w-full py-4 px-6 text-lg font-semibold rounded-lg bg-gray-700 hover:bg-gray-600">
-          MOSTRAR REPORTE CST
+          MOSTRAR REPORTE 
         </button>
       </li>
     </ul>
