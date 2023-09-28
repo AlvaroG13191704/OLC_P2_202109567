@@ -179,6 +179,7 @@ expr: NEGATION_OPERATOR right=expr                                      #NotExpr
     // Primitives
     | DIGIT_PRIMITIVE                                                   #DigitExpr
     | STRING_PRIMITIVE                                                  #StringExpr
+    | CHAR_PRIMITIVE                                                    #CharExpr
     | ID_PRIMITIVE                                                      #IdExpr
     | NIL                                                               #NilExpr
     | (TRU|FAL)                                                         #BooleanExpr

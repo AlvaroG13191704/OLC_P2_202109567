@@ -22,3 +22,36 @@ func (v *Visitor) VisitDigitExpr(ctx *parser.DigitExprContext) interface{} {
 		return &values.Integer{Value: i}
 	}
 }
+
+// visit stringexpr and char
+func (v *Visitor) VisitStringExpr(ctx *parser.StringExprContext) interface{} {
+	str := strings.Trim(ctx.GetText(), "\"") // get the string
+	// fmt.Println("Primitive String: ", str)
+	return &values.String{Value: str}
+}
+
+// visit char
+func (v *Visitor) VisitCharExpr(ctx *parser.CharExprContext) interface{} {
+	str := strings.Trim(ctx.GetText(), "'") // get the char
+	// fmt.Println("Primitive Char: ", str)
+	return &values.Character{Value: str}
+}
+
+// visit boolean
+func (v *Visitor) VisitBooleanExpr(ctx *parser.BooleanExprContext) interface{} {
+	value := strings.Trim(ctx.GetText(), "\"")
+	// fmt.Println("Primitive Boolean: ", value)
+	if value == "true" {
+		return &values.Boolean{Value: true}
+	} else {
+		return &values.Boolean{Value: false}
+	}
+}
+
+// visit nil
+func (v *Visitor) VisitNilExpr(ctx *parser.NilExprContext) interface{} {
+	// fmt.Println("Primitive Nil")
+	return &values.Nil{
+		Value: nil,
+	}
+}

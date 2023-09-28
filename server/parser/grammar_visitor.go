@@ -238,6 +238,9 @@ type GrammarVisitor interface {
 	// Visit a parse tree produced by GrammarParser#StructAsArgument.
 	VisitStructAsArgument(ctx *StructAsArgumentContext) interface{}
 
+	// Visit a parse tree produced by GrammarParser#CharExpr.
+	VisitCharExpr(ctx *CharExprContext) interface{}
+
 	// Visit a parse tree produced by GrammarParser#ArithmeticOperationExpr.
 	VisitArithmeticOperationExpr(ctx *ArithmeticOperationExprContext) interface{}
 

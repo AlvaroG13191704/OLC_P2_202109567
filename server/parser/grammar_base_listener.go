@@ -498,6 +498,12 @@ func (s *BaseGrammarListener) EnterStructAsArgument(ctx *StructAsArgumentContext
 // ExitStructAsArgument is called when production StructAsArgument is exited.
 func (s *BaseGrammarListener) ExitStructAsArgument(ctx *StructAsArgumentContext) {}
 
+// EnterCharExpr is called when production CharExpr is entered.
+func (s *BaseGrammarListener) EnterCharExpr(ctx *CharExprContext) {}
+
+// ExitCharExpr is called when production CharExpr is exited.
+func (s *BaseGrammarListener) ExitCharExpr(ctx *CharExprContext) {}
+
 // EnterArithmeticOperationExpr is called when production ArithmeticOperationExpr is entered.
 func (s *BaseGrammarListener) EnterArithmeticOperationExpr(ctx *ArithmeticOperationExprContext) {}
 

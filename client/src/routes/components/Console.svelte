@@ -22,7 +22,7 @@
   
   <div class="border-b-2 border-gray-700  m-2">
   {#if activeConsole === 'main'}
-    <textarea class="bg-slate-300 text-black w-full  p-3 font-bold" disabled bind:value={$dataContext.outputAnalysis} />
+    <textarea class="bg-slate-300 text-black w-full  p-3 font-bold" disabled  />
   {:else if activeConsole === 'symbols'}
     <SymbolConsole  />
   {:else if activeConsole === 'errors'}

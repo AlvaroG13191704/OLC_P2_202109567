@@ -238,6 +238,9 @@ type GrammarListener interface {
 	// EnterStructAsArgument is called when entering the StructAsArgument production.
 	EnterStructAsArgument(c *StructAsArgumentContext)
 
+	// EnterCharExpr is called when entering the CharExpr production.
+	EnterCharExpr(c *CharExprContext)
+
 	// EnterArithmeticOperationExpr is called when entering the ArithmeticOperationExpr production.
 	EnterArithmeticOperationExpr(c *ArithmeticOperationExprContext)
 
@@ -492,6 +495,9 @@ type GrammarListener interface {
 
 	// ExitStructAsArgument is called when exiting the StructAsArgument production.
 	ExitStructAsArgument(c *StructAsArgumentContext)
+
+	// ExitCharExpr is called when exiting the CharExpr production.
+	ExitCharExpr(c *CharExprContext)
 
 	// ExitArithmeticOperationExpr is called when exiting the ArithmeticOperationExpr production.
 	ExitArithmeticOperationExpr(c *ArithmeticOperationExprContext)

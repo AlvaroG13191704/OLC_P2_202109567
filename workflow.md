@@ -9,10 +9,10 @@
 
 ### Frontend
 - [x] Agregar un segundo Monaco editor para el código 3D.
-- [ ] Agregar un botón para compilar el código 3D.
-- [ ] Agregar un botón para optimizar el código 3D.
-- [ ] Modificar el store y variables que manejan el flujo del programa.
-- [ ] Conectar el frontend con el backend.
+- [x] Agregar un botón para compilar el código 3D.
+- [x] Agregar un botón para optimizar el código 3D.
+- [x] Modificar el store y variables que manejan el flujo del programa.
+- [x] Conectar el frontend con el backend.
 
 ### Backend
-- [ ] Conectar el backend con el frontend.
+- [x] Conectar el backend con el frontend.

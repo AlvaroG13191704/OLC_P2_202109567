@@ -1,21 +1,27 @@
 package compiler
 
 import (
+	"server/compiler/compiler/values"
 	"server/compiler/generator"
 	"server/compiler/parser"
 )
 
 type Symbol struct {
-	Id          string // the name of the variable
 	TypeSymbol  string // the type of the symbol variable or function, vector, reference, or matrix
 	TypeMutable string // the type of the variable -> var or let
 	TypeData    string // the type of the data -> Int, Float, String, Boolean, Character
 	StructOf    string // the name of the struct that contains the variable
-	Value       interface{}
 	ListParams  interface{}
 	Mutating    bool
 	Line        int
 	Column      int
+	// the following attributes are for the generator
+	Id             string // the name of the variable
+	TempString     string
+	Value          interface{}
+	CodeSentence   string
+	StackDirection int
+	HeapDirection  int
 }
 
 type Error struct {
@@ -45,4 +51,17 @@ func (v *Visitor) popScope() {
 
 func (v *Visitor) getCurrentScope() map[string]Symbol {
 	return v.SymbolStack[len(v.SymbolStack)-1]
+}
+
+// VerifyVariableCurrentScope verify if the variable is already declared in the current scope
+func (v *Visitor) VerifyVariableCurrentScope(varName string) bool {
+
+	scope := v.SymbolStack[len(v.SymbolStack)-1]
+	// fmt.Println("Current scope ->", scope)
+	if variable, ok := scope[varName]; ok {
+		// evaluate if the variable is not a function
+		return variable.TypeSymbol == values.Variable_Type
+
+	}
+	return false
 }

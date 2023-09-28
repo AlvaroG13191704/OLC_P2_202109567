@@ -10,8 +10,10 @@
 - Los parametros se manejan con el heap y stack.
 
 ## Optimización
+
 - Generar algoritmos de optimización de código intermedio.
 - Crear una estructura independiente para la opimización 
+
 
 
 
@@ -40,6 +42,18 @@ En el stack se guardan las variables de corta duración (especificamente las que
 
 ## Expressions
 
+### Primitive types
+- [x] Int
+- [x] Float
+- [x] Char
+- [x] String
+- [x] Bool
+- [x] Nil
+- [ ] Structs
+- [ ] Vectors
+- [ ] Matrix
+
+
 ### Arithmetic
 Start working with arithmetic expressions, play with temps to generate te code, understand how to generate the code for each operation, and how to handle the result of each operation.
 
@@ -48,3 +62,18 @@ Start working with arithmetic expressions, play with temps to generate te code, 
 - [ ] Multiplication
 - [ ] Division
 - [ ] Parenthesis
+
+## Instrucctions
+
+### Working with print 
+- Primitives can be printend for example: String, Int, Float, Char
+- [x] Print String using %c
+- [x] Print Characters using %c
+- [x] Print Integers using %d (convert it to int)
+- [x] Print Float using %f (convert it to float)
+- [x] Print scientific notation using %e (convert it to float)
+- [x] Print reduce scientific notation using %g (convert it to float)
+
+### Declaration of variables
+- [ ] add the function of the visitor to the symbol table
+- [ ] Save in the symbol the, the temp and the value of it

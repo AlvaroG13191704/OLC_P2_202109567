@@ -315,6 +315,10 @@ func (v *BaseGrammarVisitor) VisitStructAsArgument(ctx *StructAsArgumentContext)
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseGrammarVisitor) VisitCharExpr(ctx *CharExprContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseGrammarVisitor) VisitArithmeticOperationExpr(ctx *ArithmeticOperationExprContext) interface{} {
 	return v.VisitChildren(ctx)
 }

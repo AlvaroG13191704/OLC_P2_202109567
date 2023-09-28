@@ -68,11 +68,11 @@ func AnalyzeAndParseCode() fiber.Handler {
 		// 	"dot":    dot,
 		// })
 
-		// get the code generated
-		codeGenerated := visitor.Generator.GetCode()
+		// get the complete code
+		resultString := visitor.Generator.GetFinalCode()
 
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"result": codeGenerated,
+			"result": resultString,
 		})
 	}
 }
