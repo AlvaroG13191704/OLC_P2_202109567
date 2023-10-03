@@ -75,5 +75,8 @@ Start working with arithmetic expressions, play with temps to generate te code, 
 - [x] Print reduce scientific notation using %g (convert it to float)
 
 ### Declaration of variables
-- [ ] add the function of the visitor to the symbol table
-- [ ] Save in the symbol the, the temp and the value of it
+- [x] Int
+- [x] Float
+- [x] Character
+- [x] Bool
+- [x] String 

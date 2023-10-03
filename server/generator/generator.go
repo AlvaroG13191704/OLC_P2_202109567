@@ -1,20 +1,25 @@
 package generator
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Generator struct {
-	Temp          int           // manage the temp variables
-	StackCounter  int           // manage the stack
-	HeapCounter   int           // manage the heap
-	Label         int           // manage the labels
-	Code          []interface{} // the final code
-	TempList      []interface{} // list of temp variables
-	Compiled      []interface{} // list of compiled code
-	FinalCode     []interface{} // list of final code
-	FuncCode      []interface{}
-	BreakLabel    string // break label
-	ContinueLabel string // continue label
-	MainCode      bool
+	Temp                    int           // manage the temp variables
+	StackCounter            int           // manage the stack
+	HeapCounter             int           // manage the heap
+	Label                   int           // manage the labels
+	TempToPrint             string        // temp to print
+	TempToEvaluateEndString string        // temp to evaluate the end of the string
+	Code                    []interface{} // the final code
+	TempList                []interface{} // list of temp variables
+	Compiled                []interface{} // list of compiled code
+	FinalCode               []interface{} // list of final code
+	FuncCode                []interface{}
+	BreakLabel              string // break label
+	ContinueLabel           string // continue label
+	MainCode                bool
 }
 
 func NewGenerator() *Generator {
@@ -66,6 +71,9 @@ func (g Generator) GetFinalCode() string {
 	// add the list of temporals
 	resultString += g.FillWithTemp()
 
+	// add the function to print strings
+	// resultString += g.GenerateFuncToPrint()
+
 	// add main
 	resultString += "int main() {\n"
 
@@ -101,15 +109,15 @@ func (g *Generator) IncPointerHeap() {
 	g.HeapCounter = g.HeapCounter + 1
 }
 
-// add break lvl
-func (g *Generator) AddBreak(lvl string) {
-	g.BreakLabel = lvl
-}
+// // add break lvl
+// func (g *Generator) AddBreak(lvl string) {
+// 	g.BreakLabel = lvl
+// }
 
-// add continue lvl
-func (g *Generator) AddContinue(lvl string) {
-	g.ContinueLabel = lvl
-}
+// // add continue lvl
+// func (g *Generator) AddContinue(lvl string) {
+// 	g.ContinueLabel = lvl
+// }
 
 // add a \n
 func (g *Generator) AddNewLine() {
@@ -129,12 +137,30 @@ func (g *Generator) NewTemp() string {
 	return temp
 }
 
-// Assing stack
-func (g *Generator) VariableDeclaration(varName, tempString string) {
-	comment := fmt.Sprintf("// Declaration of the variable '%s' \n", varName)
-	assingStack := fmt.Sprintf("stack[(int)P] = %s; \n", tempString)
-	g.Code = append(g.Code, comment+assingStack)
+// Generate a new Label
+func (g *Generator) NewLabel() string {
+	label := "L" + fmt.Sprintf("%v", g.Label)
+	g.Label = g.Label + 1
+	return label
+}
 
+// generate comment, receive a list of string args
+func (g *Generator) GenComment(args ...string) {
+	comment := fmt.Sprintf("// %s \n", strings.Join(args, " "))
+	g.Code = append(g.Code, comment)
+}
+
+// save stack
+func (g *Generator) SaveStack(varName, tempString string) {
+	saveStack := fmt.Sprintf("stack[(int)P] = %s; \n", tempString)
+	g.Code = append(g.Code, saveStack)
+
+}
+
+// Save heap
+func (g *Generator) SaveHeap(tempString string) {
+	saveHeap := fmt.Sprintf("heap[(int)H] = %s; \n", tempString)
+	g.Code = append(g.Code, saveHeap)
 }
 
 // Assign temp
@@ -142,4 +168,11 @@ func (g *Generator) AssignTemp(tempString string, value string) string {
 	assingTemp := fmt.Sprintf("%s = %s;\n", tempString, value)
 	g.Code = append(g.Code, assingTemp)
 	return assingTemp
+}
+
+// Access stack
+func (g *Generator) AccessStack(tempString string, index string) string {
+	accessStack := fmt.Sprintf("%s = stack[(int)%s];\n", tempString, index)
+	g.Code = append(g.Code, accessStack)
+	return accessStack
 }

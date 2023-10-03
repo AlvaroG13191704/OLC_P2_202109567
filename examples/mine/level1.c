@@ -42,6 +42,13 @@ var numInt: Int = 10
 var numFloat: Float = 10.0
 let varChar: Character = 'a'
 var varString = "COECYS"
+
+print(bol)
+print(numInt)
+print(numFloat)
+print(varChar)
+print(varString)
+
 */
 
 #include <stdio.h>
@@ -94,6 +101,33 @@ t2 = 97;
 // Declaración de la variable 'varChar'
 stack[(int)P] = t2;
 P = P + 1;
+
+return 0;
+}
+
+// Assigment of primitives
+/*
+var bol:Bool = true
+
+bol = false
+
+*/
+#include <stdio.h>
+float stack[100000];
+float heap[100000];
+float P;
+float H;
+float t1, t2;
+
+
+int main(){
+t1 = 1;
+// Declaración de la variable 'bol'
+stack[(int)P] = t1;
+P = P + 1;
+// Asignación de la variable 'bol'
+t2 = 0
+stack[(int)0] = t2
 
 return 0;
 }

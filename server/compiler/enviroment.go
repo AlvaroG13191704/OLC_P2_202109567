@@ -65,3 +65,15 @@ func (v *Visitor) VerifyVariableCurrentScope(varName string) bool {
 	}
 	return false
 }
+
+// VerifyScope verify if the variable is in the scope
+func (v *Visitor) VerifyScope(varName string) (interface{}, bool) {
+
+	for i := len(v.SymbolStack) - 1; i >= 0; i-- {
+		scope := v.SymbolStack[i]
+		if val, ok := scope[varName]; ok {
+			return val, true
+		}
+	}
+	return nil, false
+}
