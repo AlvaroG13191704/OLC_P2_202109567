@@ -82,3 +82,37 @@ func (n *Nil) GetValue() interface{} {
 func (n *Nil) GetType() string {
 	return NilType
 }
+
+// C3D Primitive
+type C3DPrimitive struct {
+	Value    string
+	Temp     string
+	TypeData string
+	IsTemp   bool
+}
+
+func (c *C3DPrimitive) GetValue() string {
+	return c.Value
+}
+
+func (c *C3DPrimitive) GetType() string {
+
+	return c.TypeData
+}
+
+func (c *C3DPrimitive) GetTemp() string {
+	return c.Temp
+}
+
+func (c *C3DPrimitive) GetIsTemp() bool {
+	return c.IsTemp
+}
+
+func NewC3DPrimitive(value string, temp string, typeData string, isTemp bool) *C3DPrimitive {
+	return &C3DPrimitive{
+		Value:    value,
+		Temp:     temp,
+		TypeData: typeData,
+		IsTemp:   isTemp,
+	}
+}

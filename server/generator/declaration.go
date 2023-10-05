@@ -6,14 +6,14 @@ import (
 )
 
 // Function to generate c3d when a variable is declared
-func (g *Generator) GenDeclaration(id string, value values.PRIMITIVE) (string, int, int) {
+func (g *Generator) GenDeclaration(tempString, id string, value values.PRIMITIVE) (string, int, int) {
 
 	// evaluate if it's a string
 	if value.GetType() == values.StringType {
 		// add comment
 		g.GenComment("*** Declaration of a string ***")
 		// generate a new temp and assing the heap pointer
-		tempString := g.NewTemp()
+		// tempString := g.NewTemp()
 		g.AssignTemp(tempString, "H")
 		// iterate the string and save the chars in the heap
 		for _, char := range value.GetValue().(string) {
@@ -39,6 +39,8 @@ func (g *Generator) GenDeclaration(id string, value values.PRIMITIVE) (string, i
 
 	// value
 	var valueString string
+
+	fmt.Println("value.GetType(): ", value.GetType())
 
 	// evaluate the type of the value
 	switch value.GetType() {
@@ -69,7 +71,7 @@ func (g *Generator) GenDeclaration(id string, value values.PRIMITIVE) (string, i
 	}
 
 	// create temp
-	tempString := g.NewTemp()
+	// tempString := g.NewTemp()
 	// add comment
 	g.GenComment("Declaration of variable: ", id, ":", value.GetType(), "with value: ", valueString)
 	// assing to the temp the value

@@ -77,3 +77,14 @@ func (v *Visitor) VerifyScope(varName string) (interface{}, bool) {
 	}
 	return nil, false
 }
+
+// udpate a variable in the scope
+func (v *Visitor) UpdateVariable(varName string, value interface{}) {
+	for i := len(v.SymbolStack) - 1; i >= 0; i-- {
+		scope := v.SymbolStack[i]
+		if _, ok := scope[varName]; ok {
+			scope[varName] = value.(Symbol)
+			return
+		}
+	}
+}

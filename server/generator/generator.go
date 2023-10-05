@@ -12,6 +12,8 @@ type Generator struct {
 	Label                   int           // manage the labels
 	TempToPrint             string        // temp to print
 	TempToEvaluateEndString string        // temp to evaluate the end of the string
+	TempDivisionZero        string        // temp to evaluate division zero
+	IsPosibleDivisionZero   bool          // if is posible division zero
 	Code                    []interface{} // the final code
 	TempList                []interface{} // list of temp variables
 	Compiled                []interface{} // list of compiled code
@@ -59,26 +61,34 @@ func (g Generator) FillWithTemp() string {
 }
 
 func (g Generator) GetCode() []interface{} {
-	// add to the bennining of the code the temp variables stack, heap, pointer stack, pointer heap
-
 	return g.Code
 }
 
+func (g Generator) GetFuncCode() []interface{} {
+	return g.FuncCode
+}
+
 func (g Generator) GetFinalCode() string {
+
 	var resultString string
 	// add to the bennining of the code the temp variables stack, heap, pointer stack, pointer heap
 	resultString += g.FillCode()
+
 	// add the list of temporals
 	resultString += g.FillWithTemp()
 
-	// add the function to print strings
-	// resultString += g.GenerateFuncToPrint()
+	// get the code generated
+	codeGenerated := g.GetFuncCode()
+	// return string
+	for _, v := range codeGenerated {
+		resultString += v.(string)
+	}
 
 	// add main
 	resultString += "int main() {\n"
 
 	// get the code generated
-	codeGenerated := g.GetCode()
+	codeGenerated = g.GetCode()
 	// return string
 	for _, v := range codeGenerated {
 		resultString += v.(string)
@@ -144,35 +154,119 @@ func (g *Generator) NewLabel() string {
 	return label
 }
 
+// add a goto
+func (g *Generator) GoTo(label string) {
+	if g.MainCode {
+		g.Code = append(g.Code, fmt.Sprintf("goto %s;\n", label))
+	} else {
+		g.FuncCode = append(g.FuncCode, fmt.Sprintf("goto %s;\n", label))
+	}
+}
+
+// add a label
+func (g *Generator) AddLabel(label string) {
+	if g.MainCode {
+		g.Code = append(g.Code, fmt.Sprintf("%s: \n", label))
+	} else {
+		g.FuncCode = append(g.FuncCode, fmt.Sprintf("%s: \n", label))
+	}
+}
+
 // generate comment, receive a list of string args
 func (g *Generator) GenComment(args ...string) {
-	comment := fmt.Sprintf("// %s \n", strings.Join(args, " "))
-	g.Code = append(g.Code, comment)
+	if g.MainCode {
+		g.Code = append(g.Code, "// "+strings.Join(args, " ")+"\n")
+	} else {
+		g.FuncCode = append(g.FuncCode, "// "+strings.Join(args, " ")+"\n")
+	}
 }
 
 // save stack
 func (g *Generator) SaveStack(varName, tempString string) {
-	saveStack := fmt.Sprintf("stack[(int)P] = %s; \n", tempString)
-	g.Code = append(g.Code, saveStack)
+	if g.MainCode {
+		saveStack := fmt.Sprintf("stack[(int)%s] = %s; \n", varName, tempString)
+		g.Code = append(g.Code, saveStack)
+	} else {
+		saveStack := fmt.Sprintf("stack[(int)%s] = %s; \n", varName, tempString)
+		g.FuncCode = append(g.FuncCode, saveStack)
+	}
+}
 
+// Assing stack
+func (g *Generator) AssignStack(valueP int, tempString string) {
+	if g.MainCode {
+		assingStack := fmt.Sprintf("stack[(int)P + %v] = %s; \n", valueP, tempString)
+		g.Code = append(g.Code, assingStack)
+	} else {
+		assingStack := fmt.Sprintf("stack[(int)P + %v] = %s; \n", valueP, tempString)
+		g.FuncCode = append(g.FuncCode, assingStack)
+	}
+}
+
+// get stack
+func (g *Generator) GetStack(tempString, valueP string) {
+	if g.MainCode {
+		getStack := fmt.Sprintf("%s = stack[(int) %s]; \n", tempString, valueP)
+		g.Code = append(g.Code, getStack)
+	} else {
+		getStack := fmt.Sprintf("%s = stack[(int) %s]; \n", tempString, valueP)
+		g.FuncCode = append(g.FuncCode, getStack)
+	}
+}
+
+// get heap
+func (g *Generator) GetHeap(tempString, valueH string) {
+	if g.MainCode {
+		getHeap := fmt.Sprintf("%s = heap[(int) %s]; \n", tempString, valueH)
+		g.Code = append(g.Code, getHeap)
+	} else {
+		getHeap := fmt.Sprintf("%s = heap[(int) %s]; \n", tempString, valueH)
+		g.FuncCode = append(g.FuncCode, getHeap)
+	}
 }
 
 // Save heap
 func (g *Generator) SaveHeap(tempString string) {
-	saveHeap := fmt.Sprintf("heap[(int)H] = %s; \n", tempString)
-	g.Code = append(g.Code, saveHeap)
+	if g.MainCode {
+		saveHeap := fmt.Sprintf("heap[(int)H] = %s; \n", tempString)
+		g.Code = append(g.Code, saveHeap)
+	} else {
+		saveHeap := fmt.Sprintf("heap[(int)H] = %s; \n", tempString)
+		g.FuncCode = append(g.FuncCode, saveHeap)
+	}
 }
 
 // Assign temp
 func (g *Generator) AssignTemp(tempString string, value string) string {
-	assingTemp := fmt.Sprintf("%s = %s;\n", tempString, value)
-	g.Code = append(g.Code, assingTemp)
+
+	assingTemp := fmt.Sprintf("%s = %s; \n", tempString, value)
+	if g.MainCode {
+		g.Code = append(g.Code, assingTemp)
+	} else {
+		g.FuncCode = append(g.FuncCode, assingTemp)
+	}
 	return assingTemp
 }
 
 // Access stack
 func (g *Generator) AccessStack(tempString string, index string) string {
 	accessStack := fmt.Sprintf("%s = stack[(int)%s];\n", tempString, index)
-	g.Code = append(g.Code, accessStack)
+	if g.MainCode {
+		g.Code = append(g.Code, accessStack)
+	} else {
+		g.FuncCode = append(g.FuncCode, accessStack)
+	}
 	return accessStack
+}
+
+// INSTRUCTIONS
+// add If statement
+func (g *Generator) AddIf(left, right, operator, label string) {
+	ifStatement := fmt.Sprintf("if (%s %s %s) goto %s;\n", left, operator, right, label)
+	if g.MainCode {
+		g.Code = append(g.Code, ifStatement)
+	} else {
+
+		g.FuncCode = append(g.FuncCode, ifStatement)
+	}
 }

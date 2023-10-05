@@ -10,7 +10,9 @@
 
   let editorContainer: HTMLElement;
 
+  let responseCodeCompiled: string;
 
+  // $: console.log($dataContext.outputCompile)
 
   onMount(async () => {
 
@@ -23,6 +25,8 @@
 
       // Your monaco instance is ready, let's display some code!
       const editor = monaco.editor.create(editorContainer, {
+        disableLayerHinting: true,
+        disableMonospaceOptimizations: true,
         automaticLayout: true,
         theme: 'vs-dark',
         autoClosingBrackets: 'always',
@@ -36,18 +40,24 @@
         
       });
       const model = monaco.editor.createModel(
-          $dataContext.editorText,
+
+          $dataContext.outputCompile,
           // Give monaco a hint which syntax highlighting to use
-          'swift',
+          'c',
       );
       
       editor.setModel(model);
 
+      // set the value when the responseCodeCompiled changes
+      model.setValue($dataContext.outputCompile)
+      editor.setValue($dataContext.outputCompile)
+
+
     // Set the editor value
-      editor.onDidChangeModelContent(() => {
-        $dataContext.editorText = editor.getValue(); // Update the data context directly
-        // update the data context
-      });
+      // editor.onDidChangeModelContent(() => {
+      //   $dataContext.outputCompile
+      //   // update the data context
+      // });
   });
 
   onDestroy(() => {
@@ -55,7 +65,7 @@
   });
 </script>
 
-<div>
+<div >
   <div class="container" bind:this={editorContainer} />
 </div>
 
