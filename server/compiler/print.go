@@ -52,9 +52,17 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 
 		} else if primitive.GetType() == values.StringType {
 			// iterate over the string to conver to ascii code
-			v.Generator.GenerateFuncToPrint()
-			temp := v.Generator.GenString(primitive.GetValue())
-			v.Generator.GenPrintString(temp)
+			if !v.Generator.IsFirstTimePrintString {
+				v.Generator.GenerateFuncToPrint()
+				v.Generator.IsFirstTimePrintString = true
+			}
+			if primitive.IsTemp {
+				v.Generator.GenPrintString(primitive.GetValue())
+			} else {
+
+				temp := v.Generator.GenString(primitive.GetValue())
+				v.Generator.GenPrintString(temp)
+			}
 
 		} else if primitive.GetType() == values.CharType {
 			// generate c3d
@@ -65,12 +73,13 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 
 		} else if primitive.GetType() == values.BooleanType {
 			// generate c3d
-
-			if primitive.GetValue() == "true" {
-				v.Generator.GenPrint("d", "1")
-			} else {
-				v.Generator.GenPrint("d", "0")
-			}
+			fmt.Println("temp Primitive Boolean: ", primitive.GetValue())
+			// assign temp to the tempBoolFunc
+			v.Generator.AssignTemp(v.Generator.TempBoolFunc, primitive.GetValue())
+			// call the function
+			v.Generator.Code = append(v.Generator.Code, "_print_bool();\n")
+			// add newl ine
+			v.Generator.GenPrint("c", "32")
 			v.Generator.GenPrint("c", "10")
 			v.Generator.AddNewLine()
 

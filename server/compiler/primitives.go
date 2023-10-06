@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"server/compiler/compiler/values"
 	"server/compiler/parser"
 	"strings"
@@ -32,8 +33,9 @@ func (v *Visitor) VisitStringExpr(ctx *parser.StringExprContext) interface{} {
 // visit char
 func (v *Visitor) VisitCharExpr(ctx *parser.CharExprContext) interface{} {
 	str := strings.Trim(ctx.GetText(), "'") // get the char
-	// fmt.Println("Primitive Char: ", str)
-	return values.NewC3DPrimitive(str, "", values.CharType, false)
+	// conver to ascii
+	char := fmt.Sprintf("%v", int(str[0]))
+	return values.NewC3DPrimitive(fmt.Sprintf("%s", char), "", values.CharType, false)
 
 }
 
@@ -43,9 +45,9 @@ func (v *Visitor) VisitBooleanExpr(ctx *parser.BooleanExprContext) interface{} {
 	// fmt.Println("Primitive Boolean: ", value)
 	if value == "true" {
 		// return &values.Boolean{Value: true}
-		return values.NewC3DPrimitive(value, "", values.BooleanType, false)
+		return values.NewC3DPrimitive("1", "", values.BooleanType, false)
 	} else {
-		return values.NewC3DPrimitive(value, "", values.BooleanType, false)
+		return values.NewC3DPrimitive("0", "", values.BooleanType, false)
 	}
 }
 

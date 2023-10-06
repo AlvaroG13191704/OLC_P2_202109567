@@ -61,7 +61,36 @@ func (v *Visitor) VisitArithmeticOperationExpr(ctx *parser.ArithmeticOperationEx
 
 		} else if leftValue.GetType() == values.StringType && rightValue.GetType() == values.StringType { // String + String
 
-			// pending
+			fmt.Println("leftValue", leftValue, "rightValue", rightValue)
+			var tempLeft string
+			var tempRight string
+			var initPointer string
+			// generate c3d to concat strings
+			if !leftValue.IsTemp {
+				// gen left
+				tempLeft = v.Generator.GenString(leftValue.GetValue())
+			} else {
+				tempLeft = leftValue.GetValue()
+			}
+
+			if !rightValue.IsTemp {
+				// gen right
+				tempRight = v.Generator.GenString(rightValue.GetValue())
+			} else {
+				tempRight = rightValue.GetValue()
+			}
+			// gen code to concat
+			if !v.Generator.IsFirstTimeConcat {
+				initPointer = v.Generator.ConcantStrings()
+				v.Generator.IsFirstTimeConcat = true
+				// gen code to assign the pointer
+				v.Generator.GenConcatString(tempLeft, tempRight)
+				return values.NewC3DPrimitive(initPointer, newTemp, values.StringType, true)
+			} else {
+				// gen code to assign the pointer
+				v.Generator.GenConcatString(tempLeft, tempRight)
+				return values.NewC3DPrimitive(v.Generator.TempInitConcat, newTemp, values.StringType, true)
+			}
 
 		} else {
 			// throw an error

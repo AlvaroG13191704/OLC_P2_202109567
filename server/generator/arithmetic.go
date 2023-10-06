@@ -6,9 +6,11 @@ func (g *Generator) GenArithmetic(target, left, right, operator string) {
 
 	// evaluate if is / or % to add dviision by zero
 	if operator == "/" || operator == "%" {
-		g.IsPosibleDivisionZero = true
-		// gen zero
-		g.GenDivisionZero()
+		if !g.IsPosibleDivisionZero {
+			// gen zero
+			g.GenDivisionZero()
+			g.IsPosibleDivisionZero = true
+		}
 		// generate label
 		labelEnd := g.NewLabel()
 		// assign the temp to the tempDivisionZero

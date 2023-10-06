@@ -14,6 +14,16 @@ type Generator struct {
 	TempToEvaluateEndString string        // temp to evaluate the end of the string
 	TempDivisionZero        string        // temp to evaluate division zero
 	IsPosibleDivisionZero   bool          // if is posible division zero
+	IsFirstTimeConcat       bool          // if is concat string
+	IsFirstTimePrintString  bool          // if is print string
+	TempInitConcat          string        // temp to concat strings
+	TempFirstConcat         string        // temp to concat strings
+	TempSecondConcat        string        // temp to concat strings
+	TempBoolFunc            string        // temp to bool func
+	IsBoolFunc              bool          // if is bool func
+	TempFirstStringCompare  string        // temp to compare string func
+	TempSecondStringCompare string        // temp to compare string func
+	IsCompareStringFunc     bool          // if is compare string func
 	Code                    []interface{} // the final code
 	TempList                []interface{} // list of temp variables
 	Compiled                []interface{} // list of compiled code
@@ -103,19 +113,31 @@ func (g Generator) GetFinalCode() string {
 
 // increment pointer stack
 func (g *Generator) IncPointerStack() {
-	g.Code = append(g.Code, "P = P + 1;\n\n")
+	if g.MainCode {
+		g.Code = append(g.Code, "P = P + 1;\n")
+	} else {
+		g.FuncCode = append(g.FuncCode, "P = P + 1;\n")
+	}
 	g.StackCounter = g.StackCounter + 1
 }
 
 // decrement pointer stack
 func (g *Generator) DecPointerStack() {
-	g.Code = append(g.Code, "P = P - 1;\n")
-	g.StackCounter = g.StackCounter + 1
+	if g.MainCode {
+		g.Code = append(g.Code, "P = P - 1;\n")
+	} else {
+		g.FuncCode = append(g.FuncCode, "P = P - 1;\n")
+	}
+	g.StackCounter = g.StackCounter - 1
 }
 
 // increment pointer heap
 func (g *Generator) IncPointerHeap() {
-	g.Code = append(g.Code, "H = H + 1;\n")
+	if g.MainCode {
+		g.Code = append(g.Code, "H = H + 1;\n")
+	} else {
+		g.FuncCode = append(g.FuncCode, "H = H + 1;\n")
+	}
 	g.HeapCounter = g.HeapCounter + 1
 }
 
