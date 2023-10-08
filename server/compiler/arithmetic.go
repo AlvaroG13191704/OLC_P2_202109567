@@ -80,16 +80,16 @@ func (v *Visitor) VisitArithmeticOperationExpr(ctx *parser.ArithmeticOperationEx
 				tempRight = rightValue.GetValue()
 			}
 			// gen code to concat
-			if !v.Generator.IsFirstTimeConcat {
+			if !v.Generator.GeneratorNativeVariables.ConcatNative.IsFirstTimeConcat {
 				initPointer = v.Generator.ConcantStrings()
-				v.Generator.IsFirstTimeConcat = true
+				v.Generator.GeneratorNativeVariables.ConcatNative.IsFirstTimeConcat = true
 				// gen code to assign the pointer
 				v.Generator.GenConcatString(tempLeft, tempRight)
 				return values.NewC3DPrimitive(initPointer, newTemp, values.StringType, true)
 			} else {
 				// gen code to assign the pointer
 				v.Generator.GenConcatString(tempLeft, tempRight)
-				return values.NewC3DPrimitive(v.Generator.TempInitConcat, newTemp, values.StringType, true)
+				return values.NewC3DPrimitive(v.Generator.GeneratorNativeVariables.ConcatNative.TempInitConcat, newTemp, values.StringType, true)
 			}
 
 		} else {

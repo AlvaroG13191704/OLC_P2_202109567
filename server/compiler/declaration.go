@@ -1,211 +1,194 @@
 package compiler
 
-// import (
-// 	"fmt"
-// 	"log"
-// 	"server/compiler/compiler/values"
-// 	"server/compiler/parser"
-// )
+import (
+	"fmt"
+	"log"
+	"server/compiler/compiler/values"
+	"server/compiler/parser"
+)
 
-// // Visit type declaration with value or not
-// func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationContext) interface{} {
-// 	// get the id of the variable
-// 	varId := ctx.ID_PRIMITIVE().GetText()
-// 	// verify if the variable is in the scope
-// 	if v.VerifyVariableCurrentScope(varId) {
-// 		log.Printf("Error: Variable '%s' already declared \n", varId)
-// 		// add error
-// 		v.Errors = append(v.Errors, Error{
-// 			Line:   ctx.GetStart().GetLine(),
-// 			Column: ctx.GetStart().GetColumn(),
-// 			Msg:    fmt.Sprintf("Error: Variable '%s' already declared", varId),
-// 			Type:   "Semantic",
-// 		})
-// 		return nil
-// 	}
-// 	// get the type of the variable -> var or let
-// 	varType := ctx.Type_declaration().GetText()
-// 	// get the type of the value -> Int, Float, String, Boolean, Character
-// 	varTypeValue := ctx.Type_().GetText()
-// 	// get the value of the variable
-// 	// varValue := v.Visit(ctx.Expr()).(values.PRIMITIVE)
-// 	varValue := v.Visit(ctx.Expr()).(values.PRIMITIVE)
-// 	// cast int to float
-// 	if varTypeValue == "Float" && varValue.GetType() == "Int" {
-// 		// cast the value to float
-// 		// varValue = &values.Float{
-// 		// 	Value: float64(varValue.GetValue().(int64)),
-// 		// }
-// 	} else if varTypeValue != varValue.GetType() { // evaluate if the type of the value is the same as the type of the variable
-// 		// add error
-// 		log.Printf("Error: Type of the value '%s' is not the same as the type of the variable '%s' \n", varTypeValue, varValue.GetType())
-// 		v.Errors = append(v.Errors, Error{
-// 			Line:   ctx.GetStart().GetLine(),
-// 			Column: ctx.GetStart().GetColumn(),
-// 			Msg:    fmt.Sprintf("Error: Type of the value '%s' is not the same as the type of the variable '%s'", varTypeValue, varType),
-// 			Type:   "Semantic",
-// 		})
-// 		return nil
-// 	}
+// Visit type declaration with value or not
+func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationContext) interface{} {
+	// get the id of the variable
+	varId := ctx.ID_PRIMITIVE().GetText()
+	// verify if the variable is in the scope
+	if v.VerifyVariableCurrentScope(varId) {
+		log.Printf("Error: Variable '%s' already declared \n", varId)
+		// add error
+		v.Errors = append(v.Errors, Error{
+			Line:   ctx.GetStart().GetLine(),
+			Column: ctx.GetStart().GetColumn(),
+			Msg:    fmt.Sprintf("Error: Variable '%s' already declared", varId),
+			Type:   "Semantic",
+		})
+		return nil
+	}
+	// get the type of the variable -> var or let
+	varType := ctx.Type_declaration().GetText()
+	// get the type of the value -> Int, Float, String, Boolean, Character
+	varTypeValue := ctx.Type_().GetText()
+	// get the value of the variable
+	varValue := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
+	// cast int to float
+	if varTypeValue == values.FloatType && varValue.GetType() == values.IntType {
+		// cast the value to float
+		varValue.TypeData = values.FloatType
 
-// 	// if its int, float or boolean
-// 	tempString, stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
+	} else if varTypeValue != varValue.GetType() { // evaluate if the type of the value is the same as the type of the variable
+		// add error
+		log.Printf("Error: Type of the value '%s' is not the same as the type of the variable '%s' \n", varTypeValue, varValue.GetType())
+		v.Errors = append(v.Errors, Error{
+			Line:   ctx.GetStart().GetLine(),
+			Column: ctx.GetStart().GetColumn(),
+			Msg:    fmt.Sprintf("Error: Type of the value '%s' is not the same as the type of the variable '%s'", varTypeValue, varType),
+			Type:   "Semantic",
+		})
+		return nil
+	}
 
-// 	symbol := Symbol{
-// 		Id:             varId,
-// 		TypeSymbol:     values.Variable_Type,
-// 		TypeMutable:    varType,
-// 		TypeData:       varTypeValue,
-// 		Value:          varValue,
-// 		Line:           ctx.GetStart().GetLine(),
-// 		Column:         ctx.GetStart().GetColumn(),
-// 		TempString:     tempString,
-// 		StackDirection: stack,
-// 		HeapDirection:  heap,
-// 	}
+	// gen c3d
+	tempString, stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
 
-// 	// add the variable to the scope
-// 	v.getCurrentScope()[varId] = symbol
+	symbol := Symbol{
+		Id:             varId,
+		TypeSymbol:     values.Variable_Type,
+		TypeMutable:    varType,
+		TypeData:       varTypeValue,
+		Value:          varValue,
+		Line:           ctx.GetStart().GetLine(),
+		Column:         ctx.GetStart().GetColumn(),
+		TempString:     tempString,
+		StackDirection: stack - 1,
+		HeapDirection:  heap - 1,
+	}
 
-// 	// apppend to the TableSymbol
-// 	// v.TableSymbol = append(v.TableSymbol, symbol)
-// 	// print the symbol table
-// 	// fmt.Println("Current scope or symbol table ->", v.getCurrentScope())
-// 	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
+	// add the variable to the scope
+	v.getCurrentScope()[varId] = symbol
 
-// 	return nil
-// }
+	// apppend to the TableSymbol
+	// v.TableSymbol = append(v.TableSymbol, symbol)
+	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
 
-// // // Visit type declaration with value or not
-// // func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValueDeclarationContext) interface{} {
-// // 	// get the id of the variable
-// // 	varId := ctx.ID_PRIMITIVE().GetText()
-// // 	// verify if the variable is in the scope
-// // 	if v.VerifyVariableCurrentScope(varId) {
-// // 		log.Printf("Error: Variable '%s' already declared \n", varId)
-// // 		// add error
-// // 		v.Errors = append(v.Errors, Error{
-// // 			Line:   ctx.GetStart().GetLine(),
-// // 			Column: ctx.GetStart().GetColumn(),
-// // 			Msg:    fmt.Sprintf("Error: Variable '%s' already declared", varId),
-// // 			Type:   "Semantic",
-// // 		})
-// // 		return nil
-// // 	}
-// // 	// get the type of the variable -> var or let
-// // 	varType := ctx.Type_declaration().GetText()
-// // 	// get the type of the value -> Int, Float, String, Boolean, Character
-// // 	varTypeValue := ctx.Type_().GetText()
-// // 	// get the question mark
-// // 	questionMark := ctx.QUESTION_MARK()
+	return nil
+}
 
-// // 	// evaluate if the var or let
-// // 	if varType == "var" {
-// // 		// save the value of the variable as nil
-// // 		varValue := &values.Nil{
-// // 			Value: nil,
-// // 		}
-// // 		// generate temp
-// // 		// newTemp := v.Generator.NewTemp()
-// // 		// if its int, float or boolean
-// // 		tempString, stack, heap := v.Generator.GenDeclaration(var.val, varId, varValue)
+// Visit type declaration with value or not
+func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValueDeclarationContext) interface{} {
+	// get the id of the variable
+	varId := ctx.ID_PRIMITIVE().GetText()
+	// verify if the variable is in the scope
+	if v.VerifyVariableCurrentScope(varId) {
+		log.Printf("Error: Variable '%s' already declared \n", varId)
+		// add error
+		v.Errors = append(v.Errors, Error{
+			Line:   ctx.GetStart().GetLine(),
+			Column: ctx.GetStart().GetColumn(),
+			Msg:    fmt.Sprintf("Error: Variable '%s' already declared", varId),
+			Type:   "Semantic",
+		})
+		return nil
+	}
+	// get the type of the variable -> var or let
+	varType := ctx.Type_declaration().GetText()
+	// get the type of the value -> Int, Float, String, Boolean, Character
+	varTypeValue := ctx.Type_().GetText()
+	// get the question mark
+	questionMark := ctx.QUESTION_MARK()
 
-// // 		symbol := Symbol{
-// // 			Id:             varId,
-// // 			TypeSymbol:     values.Variable_Type,
-// // 			TypeMutable:    varType,
-// // 			TypeData:       varTypeValue,
-// // 			Value:          varValue,
-// // 			Line:           ctx.GetStart().GetLine(),
-// // 			Column:         ctx.GetStart().GetColumn(),
-// // 			TempString:     tempString,
-// // 			StackDirection: stack,
-// // 			HeapDirection:  heap,
-// // 		}
+	// evaluate if the var or let
+	if varType == "var" {
+		// save the value of the variable as nil
+		varValue := values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
+		// generate temp
+		tempString, stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
 
-// // 		// add the variable to the scope
-// // 		v.getCurrentScope()[varId] = symbol
+		symbol := Symbol{
+			Id:             varId,
+			TypeSymbol:     values.Variable_Type,
+			TypeMutable:    varType,
+			TypeData:       varTypeValue,
+			Value:          varValue,
+			Line:           ctx.GetStart().GetLine(),
+			Column:         ctx.GetStart().GetColumn(),
+			TempString:     tempString,
+			StackDirection: stack - 1,
+			HeapDirection:  heap - 1,
+		}
 
-// // 		// apppend to the TableSymbol
-// // 		// v.TableSymbol = append(v.TableSymbol, symbol)
-// // 		// print the symbol table
-// // 		fmt.Println("Global scope or symbol table ->", v.SymbolStack)
+		// add the variable to the scope
+		v.getCurrentScope()[varId] = symbol
 
-// // 	} else if varType == "let" {
-// // 		if questionMark != nil {
-// // 			log.Printf("Error: Variable '%s' is a constant and cannot be optional \n", varId)
-// // 			// add error
-// // 			v.Errors = append(v.Errors, Error{
-// // 				Line:   ctx.GetStart().GetLine(),
-// // 				Column: ctx.GetStart().GetColumn(),
-// // 				Msg:    fmt.Sprintf("Error: Variable '%s' is a constant and cannot be optional", varId),
-// // 				Type:   "Semantic",
-// // 			})
-// // 			return nil
-// // 		}
-// // 	}
+		// apppend to the TableSymbol
+		// v.TableSymbol = append(v.TableSymbol, symbol)
+		fmt.Println("Global scope or symbol table ->", v.SymbolStack)
 
-// // 	return nil
-// // }
+	} else if varType == "let" {
+		if questionMark != nil {
+			log.Printf("Error: Variable '%s' is a constant and cannot be optional \n", varId)
+			// add error
+			v.Errors = append(v.Errors, Error{
+				Line:   ctx.GetStart().GetLine(),
+				Column: ctx.GetStart().GetColumn(),
+				Msg:    fmt.Sprintf("Error: Variable '%s' is a constant and cannot be optional", varId),
+				Type:   "Semantic",
+			})
+			return nil
+		}
+	}
 
-// // // Visit type declaration without type value (infer)
+	return nil
+}
 
-// // func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) interface{} {
-// // 	// get the id of the variable
-// // 	varId := ctx.ID_PRIMITIVE().GetText()
-// // 	// verify if the variable is in the scope
-// // 	if v.VerifyVariableCurrentScope(varId) {
-// // 		log.Printf("Error: Variable '%s' already declared \n", varId)
-// // 		// add error
-// // 		v.Errors = append(v.Errors, Error{
-// // 			Line:   ctx.GetStart().GetLine(),
-// // 			Column: ctx.GetStart().GetColumn(),
-// // 			Msg:    fmt.Sprintf("Error: Variable '%s' already declared", varId),
-// // 			Type:   "Semantic",
-// // 		})
-// // 		return nil
-// // 	}
-// // 	// get the type of the variable -> var or let
-// // 	varType := ctx.Type_declaration().GetText()
-// // 	// get the type of the value -> Int, Float, String, Boolean, Character
-// // 	// get the value of the variable
-// // 	varValue := v.Visit(ctx.Expr()).(values.PRIMITIVE)
-// // 	// get the type of the value
-// // 	varTypeValue := varValue.GetType()
+// Visit type declaration without type value (infer)
 
-// // 	// generate temp
-// // 	newTemp := v.Generator.NewTemp()
-// // 	// if its int, float or boolean
-// // 	tempString, stack, heap := v.Generator.GenDeclaration(newTemp, varId, varValue)
+func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) interface{} {
+	// get the id of the variable
+	varId := ctx.ID_PRIMITIVE().GetText()
+	// verify if the variable is in the scope
+	if v.VerifyVariableCurrentScope(varId) {
+		log.Printf("Error: Variable '%s' already declared \n", varId)
+		// add error
+		v.Errors = append(v.Errors, Error{
+			Line:   ctx.GetStart().GetLine(),
+			Column: ctx.GetStart().GetColumn(),
+			Msg:    fmt.Sprintf("Error: Variable '%s' already declared", varId),
+			Type:   "Semantic",
+		})
+		return nil
+	}
+	// get the type of the variable -> var or let
+	varType := ctx.Type_declaration().GetText()
+	// get the type of the value -> Int, Float, String, Boolean, Character
+	varValue := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
+	// get the type of the value
+	varTypeValue := varValue.GetType()
 
-// // 	symbol := Symbol{
-// // 		Id:             varId,
-// // 		TypeSymbol:     values.Variable_Type,
-// // 		TypeMutable:    varType,
-// // 		TypeData:       varTypeValue,
-// // 		Value:          varValue,
-// // 		Line:           ctx.GetStart().GetLine(),
-// // 		Column:         ctx.GetStart().GetColumn(),
-// // 		TempString:     tempString,
-// // 		StackDirection: stack,
-// // 		HeapDirection:  heap,
-// // 	}
+	// generate temp
+	newTemp := v.Generator.NewTemp()
+	// if its int, float or boolean
+	tempString, stack, heap := v.Generator.GenDeclaration(newTemp, varId, varValue)
 
-// // 	// add the variable to the scope
-// // 	v.getCurrentScope()[varId] = symbol
+	symbol := Symbol{
+		Id:             varId,
+		TypeSymbol:     values.Variable_Type,
+		TypeMutable:    varType,
+		TypeData:       varTypeValue,
+		Value:          varValue,
+		Line:           ctx.GetStart().GetLine(),
+		Column:         ctx.GetStart().GetColumn(),
+		TempString:     tempString,
+		StackDirection: stack - 1,
+		HeapDirection:  heap - 1,
+	}
 
-// // 	// apppend to the TableSymbol
-// // 	// v.TableSymbol = append(v.TableSymbol, symbol)
-// // 	// print the symbol table
-// // 	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
+	// add the variable to the scope
+	v.getCurrentScope()[varId] = symbol
 
-// // 	// apppend to the TableSymbol
-// // 	// v.TableSymbol = append(v.TableSymbol, symbol)
+	// apppend to the TableSymbol
+	// v.TableSymbol = append(v.TableSymbol, symbol)
 
-// // 	// print the symbol table
-// // 	// fmt.Println("Current scope or symbol table ->", v.getCurrentScope())
-// // 	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
+	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
 
-// // 	return nil
+	return nil
 
-// // }
+}

@@ -8,8 +8,8 @@ func (g *Generator) GenerateFuncToPrint() {
 	// set false main code
 	g.MainCode = false
 
-	g.TempToPrint = g.NewTemp()
-	g.TempToEvaluateEndString = g.NewTemp()
+	g.GeneratorNativeVariables.PrintNative.TempToPrint = g.NewTemp()
+	g.GeneratorNativeVariables.PrintNative.TempToEvaluateEndString = g.NewTemp()
 	// generate label
 	labelStart := g.NewLabel()
 	labelEnd := g.NewLabel()
@@ -18,13 +18,13 @@ func (g *Generator) GenerateFuncToPrint() {
 	// add label
 	g.AddLabel(labelStart)
 	// get the position of the string using the temp
-	g.GetHeap(g.TempToEvaluateEndString, g.TempToPrint)
+	g.GetHeap(g.GeneratorNativeVariables.PrintNative.TempToEvaluateEndString, g.GeneratorNativeVariables.PrintNative.TempToPrint)
 	// evaluate if the string is not the end
-	g.AddIf(g.TempToEvaluateEndString, "-1", "==", labelEnd)
+	g.AddIf(g.GeneratorNativeVariables.PrintNative.TempToEvaluateEndString, "-1", "==", labelEnd)
 	// print the string
-	g.GenPrint("c", "(int)"+g.TempToEvaluateEndString)
+	g.GenPrint("c", "(int)"+g.GeneratorNativeVariables.PrintNative.TempToEvaluateEndString)
 	// increment the temp
-	g.GenArithmetic(g.TempToPrint, g.TempToPrint, "1", "+")
+	g.GenArithmetic(g.GeneratorNativeVariables.PrintNative.TempToPrint, g.GeneratorNativeVariables.PrintNative.TempToPrint, "1", "+")
 	// go to the start
 	g.GoTo(labelStart)
 	// add label
@@ -43,11 +43,11 @@ func (g *Generator) ConcantStrings() string {
 	g.MainCode = false
 	// generate temps
 	initHeapPointer := g.NewTemp()
-	g.TempInitConcat = initHeapPointer
+	g.GeneratorNativeVariables.ConcatNative.TempInitConcat = initHeapPointer
 	tempFirstString := g.NewTemp()
-	g.TempFirstConcat = tempFirstString
+	g.GeneratorNativeVariables.ConcatNative.TempFirstConcat = tempFirstString
 	tempSecondString := g.NewTemp()
-	g.TempSecondConcat = tempSecondString
+	g.GeneratorNativeVariables.ConcatNative.TempSecondConcat = tempSecondString
 	tempIterator := g.NewTemp()
 	// labels
 	labelFirstLoop := g.NewLabel()
@@ -131,8 +131,8 @@ func (g *Generator) GenConcatString(left, right string) {
 	// add comment
 	g.GenComment("*** concat strings ***")
 	// assign temps
-	g.AssignTemp(g.TempFirstConcat, left)
-	g.AssignTemp(g.TempSecondConcat, right)
+	g.AssignTemp(g.GeneratorNativeVariables.ConcatNative.TempFirstConcat, left)
+	g.AssignTemp(g.GeneratorNativeVariables.ConcatNative.TempSecondConcat, right)
 	// call the function
 	g.Code = append(g.Code, "_concatString();\n")
 	g.AddNewLine()
@@ -143,9 +143,22 @@ func (g *Generator) GenComparationString(left, right string) {
 	// add comment
 	g.GenComment("*** compare strings ***")
 	// assign temps
-	g.AssignTemp(g.TempFirstStringCompare, left)
-	g.AssignTemp(g.TempSecondStringCompare, right)
+	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompare, left)
+	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompare, right)
 	// call the function
 	g.Code = append(g.Code, "_compare_strings();\n")
+	g.AddNewLine()
+}
+
+// Func to compare strings less greater
+func (g *Generator) GenComparationStringLT(left, right string) {
+
+	// add comment
+	g.GenComment("*** compare strings ***")
+	// assign temps
+	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareLT, left)
+	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareLT, right)
+	// call the function
+	g.Code = append(g.Code, "_compare_strings_lt();\n")
 	g.AddNewLine()
 }

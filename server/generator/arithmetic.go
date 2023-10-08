@@ -6,19 +6,19 @@ func (g *Generator) GenArithmetic(target, left, right, operator string) {
 
 	// evaluate if is / or % to add dviision by zero
 	if operator == "/" || operator == "%" {
-		if !g.IsPosibleDivisionZero {
+		if !g.GeneratorNativeVariables.ZeroNative.IsPosibleDivisionZero {
 			// gen zero
 			g.GenDivisionZero()
-			g.IsPosibleDivisionZero = true
+			g.GeneratorNativeVariables.ZeroNative.IsPosibleDivisionZero = true
 		}
 		// generate label
 		labelEnd := g.NewLabel()
 		// assign the temp to the tempDivisionZero
-		g.AssignTemp(g.TempDivisionZero, right)
+		g.AssignTemp(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, right)
 		// call the function
 		g.Code = append(g.Code, "_zero_division();\n")
 		// evaluate if the tempDivisionZero is 1
-		g.AddIf(g.TempDivisionZero, "1", "==", labelEnd)
+		g.AddIf(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, "1", "==", labelEnd)
 		// add the code
 		g.Code = append(g.Code, fmt.Sprintf("%s = %s %s %s;\n", target, left, operator, right))
 		// add label
@@ -39,7 +39,7 @@ func (g *Generator) GenDivisionZero() {
 	// set false main
 	g.MainCode = false
 	// g.TempDivisionZero = tempZero
-	g.TempDivisionZero = g.NewTemp()
+	g.GeneratorNativeVariables.ZeroNative.TempDivisionZero = g.NewTemp()
 
 	// generate labels
 	labelIfTrue := g.NewLabel()
@@ -48,7 +48,7 @@ func (g *Generator) GenDivisionZero() {
 	// add the code
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("void _zero_division() {\n"))
 	// add if
-	g.AddIf("(int)"+g.TempDivisionZero, "0", "!=", labelIfTrue)
+	g.AddIf("(int)"+g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, "0", "!=", labelIfTrue)
 	// iterate over the string to conver to ascii code
 	for _, char := range "Error: Division by zero" {
 		// generate c3d
@@ -58,13 +58,13 @@ func (g *Generator) GenDivisionZero() {
 	g.GenPrint("c", "10")
 
 	// assign 1 to the temp
-	g.AssignTemp(g.TempDivisionZero, "1")
+	g.AssignTemp(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, "1")
 	// go to the end
 	g.GoTo(labelEnd)
 	// add label
 	g.AddLabel(labelIfTrue)
 	// assign 0 to the temp
-	g.AssignTemp(g.TempDivisionZero, "0")
+	g.AssignTemp(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, "0")
 	// add label
 	g.AddLabel(labelEnd)
 	// end of the function

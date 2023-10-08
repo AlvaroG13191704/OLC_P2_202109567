@@ -20,9 +20,9 @@ func (v *Visitor) VisitComparationOperationExpr(ctx *parser.ComparationOperation
 	// add comment
 	v.Generator.GenComment("Comparation operation")
 
-	if !v.Generator.IsBoolFunc {
+	if !v.Generator.GeneratorNativeVariables.PrintBoolNative.IsBoolFunc {
 		v.Generator.GenPrintBoolFunc()
-		v.Generator.IsBoolFunc = true
+		v.Generator.GeneratorNativeVariables.PrintBoolNative.IsBoolFunc = true
 	}
 
 	// verify the type of the values
@@ -83,9 +83,9 @@ func (v *Visitor) VisitComparationOperationExpr(ctx *parser.ComparationOperation
 				tempRight = rightValue.GetValue()
 			}
 			// gen code to concat
-			if !v.Generator.IsCompareStringFunc {
+			if !v.Generator.GeneratorNativeVariables.CompareStringsNative.IsCompareStringFunc {
 				initPointer = v.Generator.GenComparationStringFunc()
-				v.Generator.IsCompareStringFunc = true
+				v.Generator.GeneratorNativeVariables.CompareStringsNative.IsCompareStringFunc = true
 				// gen code to assign the pointer
 				v.Generator.GenComparationString(tempLeft, tempRight)
 				temp := v.Generator.GenComparation(initPointer, "1", "==")
@@ -198,9 +198,9 @@ func (v *Visitor) VisitComparationOperationExpr(ctx *parser.ComparationOperation
 				tempRight = rightValue.GetValue()
 			}
 			// gen code to concat
-			if !v.Generator.IsCompareStringFunc {
+			if !v.Generator.GeneratorNativeVariables.CompareStringsNative.IsCompareStringFunc {
 				initPointer = v.Generator.GenComparationStringFunc()
-				v.Generator.IsCompareStringFunc = true
+				v.Generator.GeneratorNativeVariables.CompareStringsNative.IsCompareStringFunc = true
 				// gen code to assign the pointer
 				v.Generator.GenComparationString(tempLeft, tempRight)
 				temp := v.Generator.GenComparation(initPointer, "1", "!=")
@@ -257,7 +257,5 @@ func (v *Visitor) VisitComparationOperationExpr(ctx *parser.ComparationOperation
 		}
 	}
 
-	return &values.Nil{
-		Value: nil,
-	}
+	return values.NewC3DPrimitive(values.NilType, newTemp, values.NilType, false)
 }

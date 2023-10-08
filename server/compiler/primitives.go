@@ -54,5 +54,5 @@ func (v *Visitor) VisitBooleanExpr(ctx *parser.BooleanExprContext) interface{} {
 // visit nil
 func (v *Visitor) VisitNilExpr(ctx *parser.NilExprContext) interface{} {
 	// fmt.Println("Primitive Nil")
-	return values.NewC3DPrimitive(values.NilType, "", values.NilType, false)
+	return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
 }

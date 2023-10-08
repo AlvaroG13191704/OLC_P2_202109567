@@ -52,9 +52,9 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 
 		} else if primitive.GetType() == values.StringType {
 			// iterate over the string to conver to ascii code
-			if !v.Generator.IsFirstTimePrintString {
+			if !v.Generator.GeneratorNativeVariables.ConcatNative.IsFirstTimePrintString {
 				v.Generator.GenerateFuncToPrint()
-				v.Generator.IsFirstTimePrintString = true
+				v.Generator.GeneratorNativeVariables.ConcatNative.IsFirstTimePrintString = true
 			}
 			if primitive.IsTemp {
 				v.Generator.GenPrintString(primitive.GetValue())
@@ -72,10 +72,13 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 			v.Generator.AddNewLine()
 
 		} else if primitive.GetType() == values.BooleanType {
+			if !v.Generator.GeneratorNativeVariables.PrintBoolNative.IsBoolFunc {
+				v.Generator.GenPrintBoolFunc()
+				v.Generator.GeneratorNativeVariables.PrintBoolNative.IsBoolFunc = true
+			}
 			// generate c3d
-			fmt.Println("temp Primitive Boolean: ", primitive.GetValue())
 			// assign temp to the tempBoolFunc
-			v.Generator.AssignTemp(v.Generator.TempBoolFunc, primitive.GetValue())
+			v.Generator.AssignTemp(v.Generator.GeneratorNativeVariables.PrintBoolNative.TempBoolFunc, primitive.GetValue())
 			// call the function
 			v.Generator.Code = append(v.Generator.Code, "_print_bool();\n")
 			// add newl ine
@@ -85,7 +88,10 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 
 		} else if primitive.GetType() == values.NilType {
 			// generate c3d
-			v.Generator.GenPrint("f", "9999999827968.00")
+			v.Generator.GenPrint("c", "110")
+			v.Generator.GenPrint("c", "105")
+			v.Generator.GenPrint("c", "108")
+			v.Generator.GenPrint("c", "32")
 			v.Generator.GenPrint("c", "10")
 			v.Generator.AddNewLine()
 		} else {

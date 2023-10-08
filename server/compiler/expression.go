@@ -1,37 +1,44 @@
 package compiler
 
 import (
+	"fmt"
+	"log"
 	"server/compiler/compiler/values"
 	"server/compiler/parser"
 )
 
 // visit idexpr
-// func (v *Visitor) VisitIdExpr(ctx *parser.IdExprContext) interface{} {
-// 	id := ctx.GetText() // get the id
-// 	// fmt.Println("Id -> ", id)
+func (v *Visitor) VisitIdExpr(ctx *parser.IdExprContext) interface{} {
+	id := ctx.GetText() // get the id
+	// fmt.Println("Id -> ", id)
 
-// 	// verify if the id is in the scope or others
-// 	variable, ok := v.VerifyScope(id)
-// 	if ok {
-// 		value := variable.(Symbol)
-// 		// return the value
-// 		return value.Value
+	// verify if the id is in the scope or others
+	variable, ok := v.VerifyScope(id)
+	if ok {
+		value := variable.(Symbol)
 
-// 	} else {
-// 		fmt.Printf("Scope -> %v\n", v.SymbolStack)
-// 		// add the error to the errors
-// 		log.Printf("Error: Variable '%s' not declared", id)
-// 		v.Errors = append(v.Errors, Error{
-// 			Line:   ctx.GetStart().GetLine(),
-// 			Column: ctx.GetStart().GetColumn(),
-// 			Msg:    "Variable '" + id + "' not declared",
-// 			Type:   "VariableError",
-// 		})
-// 	}
-// 	return &values.Nil{
-// 		Value: nil,
-// 	}
-// }
+		if value.Value.(*values.C3DPrimitive).GetType() == values.NilType {
+			return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
+		}
+		// t0 = stack[(int)0 ]
+		temp := v.Generator.NewTemp()
+		v.Generator.AccessStack(temp, fmt.Sprintf("%d", value.StackDirection))
+		// change temp
+		return values.NewC3DPrimitive(temp, temp, value.TypeData, true)
+
+	} else {
+		fmt.Printf("Scope -> %v\n", v.SymbolStack)
+		// add the error to the errors
+		log.Printf("Error: Variable '%s' not declared", id)
+		v.Errors = append(v.Errors, Error{
+			Line:   ctx.GetStart().GetLine(),
+			Column: ctx.GetStart().GetColumn(),
+			Msg:    "Variable '" + id + "' not declared",
+			Type:   "VariableError",
+		})
+	}
+	return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
+}
 
 // visit parenexpr
 func (v *Visitor) VisitParenExpr(ctx *parser.ParenExprContext) interface{} {
@@ -63,16 +70,22 @@ func (v *Visitor) VisitNegExpr(ctx *parser.NegExprContext) interface{} {
 
 }
 
-// // visit notexpr
-// func (v *Visitor) VisitNotExpr(ctx *parser.NotExprContext) interface{} {
-// 	// get the value
-// 	value := v.Visit(ctx.Expr()).(values.PRIMITIVE)
-// 	// verify if the value is a boolean
-// 	if value.GetType() == values.BooleanType {
-// 		return &values.Boolean{Value: !value.GetValue().(bool)} // return the negative of the value
-// 	}
-// 	return &values.Nil{
-// 		Value: nil,
-// 	}
+// visit notexpr
+func (v *Visitor) VisitNotExpr(ctx *parser.NotExprContext) interface{} {
+	// get the value
+	value := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
 
-// }
+	if !v.Generator.GeneratorNativeVariables.LogicalNative.IsNotFunc {
+		v.Generator.GenNotFunc()
+		v.Generator.GeneratorNativeVariables.LogicalNative.IsNotFunc = true
+		temp := v.Generator.GenLogical(value.GetValue(), "", v.Generator.GeneratorNativeVariables.LogicalNative.TempNot, "", v.Generator.GeneratorNativeVariables.LogicalNative.TempNoPointer, "not")
+		// return the value
+		return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
+	} else {
+		temp := v.Generator.GenLogical(value.GetValue(), "", v.Generator.GeneratorNativeVariables.LogicalNative.TempNot, "", v.Generator.GeneratorNativeVariables.LogicalNative.TempNoPointer, "not")
+		// return the value
+		return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
+	}
+
+	// return values.NewC3DPrimitive(values.NilType, "", values.NilType, false)
+}

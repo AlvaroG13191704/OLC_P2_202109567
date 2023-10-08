@@ -6,32 +6,19 @@ import (
 )
 
 type Generator struct {
-	Temp                    int           // manage the temp variables
-	StackCounter            int           // manage the stack
-	HeapCounter             int           // manage the heap
-	Label                   int           // manage the labels
-	TempToPrint             string        // temp to print
-	TempToEvaluateEndString string        // temp to evaluate the end of the string
-	TempDivisionZero        string        // temp to evaluate division zero
-	IsPosibleDivisionZero   bool          // if is posible division zero
-	IsFirstTimeConcat       bool          // if is concat string
-	IsFirstTimePrintString  bool          // if is print string
-	TempInitConcat          string        // temp to concat strings
-	TempFirstConcat         string        // temp to concat strings
-	TempSecondConcat        string        // temp to concat strings
-	TempBoolFunc            string        // temp to bool func
-	IsBoolFunc              bool          // if is bool func
-	TempFirstStringCompare  string        // temp to compare string func
-	TempSecondStringCompare string        // temp to compare string func
-	IsCompareStringFunc     bool          // if is compare string func
-	Code                    []interface{} // the final code
-	TempList                []interface{} // list of temp variables
-	Compiled                []interface{} // list of compiled code
-	FinalCode               []interface{} // list of final code
-	FuncCode                []interface{}
-	BreakLabel              string // break label
-	ContinueLabel           string // continue label
-	MainCode                bool
+	Temp                     int                      // manage the temp variables
+	StackCounter             int                      // manage the stack
+	HeapCounter              int                      // manage the heap
+	Label                    int                      // manage the labels
+	GeneratorNativeVariables GeneratorNativeVariables // start native temps
+	Code                     []interface{}            // the final code
+	TempList                 []interface{}            // list of temp variables
+	Compiled                 []interface{}            // list of compiled code
+	FinalCode                []interface{}            // list of final code
+	FuncCode                 []interface{}
+	BreakLabel               string // break label
+	ContinueLabel            string // continue label
+	MainCode                 bool
 }
 
 func NewGenerator() *Generator {
@@ -118,7 +105,9 @@ func (g *Generator) IncPointerStack() {
 	} else {
 		g.FuncCode = append(g.FuncCode, "P = P + 1;\n")
 	}
+
 	g.StackCounter = g.StackCounter + 1
+
 }
 
 // decrement pointer stack

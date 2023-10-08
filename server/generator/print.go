@@ -13,7 +13,7 @@ func (g *Generator) GenPrintString(tempIndex string) {
 	// add comment
 	g.GenComment("Print a string")
 	// assing the temp to the tempString
-	g.AssignTemp(g.TempToPrint, tempIndex)
+	g.AssignTemp(g.GeneratorNativeVariables.PrintNative.TempToPrint, tempIndex)
 	// call the function
 	g.Code = append(g.Code, "_printString();\n")
 	// add a %c 32

@@ -41,7 +41,7 @@ var bol:Bool = true
 var numInt: Int = 10
 var numFloat: Float = 10.0
 let varChar: Character = 'a'
-var varString = "COECYS"
+var varString: String = "COECYS"
 
 print(bol)
 print(numInt)
@@ -208,3 +208,41 @@ return 0;
 
  print(7 - (5 + 10 * (2 + 4 * (5 + 2 * 3)) - 8 * 3 * 3) + 50 * (6 * 2))
  print((2 * 2 * 2 * 2) - 9 - (8 - 6 + (3 * 3 - 6 * 5 - 7 - (9 + 7 * 7 * 7) + 10) - 5) + 8 - (6 - 5 * (2 * 3)))
+
+
+// Integers
+print(10 < 20)      // True
+print(5 >= 5)       // True
+print(15 != 15)     // False
+
+// Floats
+print(3.14 < 2.71)  // False
+print(5.0 == 5.0)   // True
+print(1.618 > 2.718) // False
+
+# Booleans
+print(true == false)   // False
+print(true != false)   // True
+
+
+// Characters (compare ASCII values)
+print('a' < 'b')       // True
+print('z' >= 'A')      // True
+print('x' != 'x')      // False
+
+// Strings (lexicographic order)
+print("apple" < "banana")     // True
+print("apple" >= "appetizer") // False
+print("cherry" != "cherry")   // False
+
+print(true && true)
+print(true && false)
+print(false && true)
+print(false && false)
+print(" ")
+print(true || true)
+print(true || false)
+print(false || true)
+print(false || false)
+
+// Declaration of primitives
