@@ -28,6 +28,8 @@ func NewGenerator() *Generator {
 		BreakLabel:    "",
 		ContinueLabel: "",
 		MainCode:      true,
+		StackCounter:  0,
+		HeapCounter:   0,
 	}
 }
 
@@ -106,7 +108,7 @@ func (g *Generator) IncPointerStack() {
 		g.FuncCode = append(g.FuncCode, "P = P + 1;\n")
 	}
 
-	g.StackCounter = g.StackCounter + 1
+	// g.StackCounter = g.StackCounter + 1
 
 }
 
@@ -117,7 +119,7 @@ func (g *Generator) DecPointerStack() {
 	} else {
 		g.FuncCode = append(g.FuncCode, "P = P - 1;\n")
 	}
-	g.StackCounter = g.StackCounter - 1
+	// g.StackCounter = g.StackCounter - 1
 }
 
 // increment pointer heap
@@ -128,6 +130,16 @@ func (g *Generator) IncPointerHeap() {
 		g.FuncCode = append(g.FuncCode, "H = H + 1;\n")
 	}
 	g.HeapCounter = g.HeapCounter + 1
+}
+
+// increment counter
+func (g *Generator) CounterStack(which string) {
+	if which == "+" {
+		g.StackCounter = g.StackCounter + 1
+	} else {
+		g.StackCounter = g.StackCounter - 1
+	}
+
 }
 
 // // add break lvl

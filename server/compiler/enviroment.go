@@ -3,6 +3,7 @@ package compiler
 import (
 	"server/compiler/compiler/values"
 	"server/compiler/generator"
+
 	"server/compiler/parser"
 )
 
@@ -17,7 +18,6 @@ type Symbol struct {
 	Column      int
 	// the following attributes are for the generator
 	Id             string // the name of the variable
-	TempString     string
 	Value          interface{}
 	CodeSentence   string
 	StackDirection int

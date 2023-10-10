@@ -41,7 +41,7 @@ func (v *Visitor) VisitRelationalOperationExpr(ctx *parser.RelationalOperationEx
 				// generate c3d arithmetic operation
 				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "<")
 				// return the value
-				return values.NewC3DPrimitive(newTemp, temp, values.BooleanType, true)
+				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 			}
 
@@ -77,7 +77,7 @@ func (v *Visitor) VisitRelationalOperationExpr(ctx *parser.RelationalOperationEx
 				// generate c3d arithmetic operation
 				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "<=")
 				// return the value
-				return values.NewC3DPrimitive(newTemp, temp, values.BooleanType, true)
+				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 			}
 
@@ -115,7 +115,7 @@ func (v *Visitor) VisitRelationalOperationExpr(ctx *parser.RelationalOperationEx
 				// generate c3d arithmetic operation
 				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), ">")
 				// return the value
-				return values.NewC3DPrimitive(newTemp, temp, values.BooleanType, true)
+				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 			}
 
@@ -153,7 +153,7 @@ func (v *Visitor) VisitRelationalOperationExpr(ctx *parser.RelationalOperationEx
 				// generate c3d arithmetic operation
 				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), ">=")
 				// return the value
-				return values.NewC3DPrimitive(newTemp, temp, values.BooleanType, true)
+				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 			}
 

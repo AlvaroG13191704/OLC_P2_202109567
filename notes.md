@@ -57,11 +57,11 @@ En el stack se guardan las variables de corta duración (especificamente las que
 ### Arithmetic
 Start working with arithmetic expressions, play with temps to generate te code, understand how to generate the code for each operation, and how to handle the result of each operation.
 
-- [ ] Sum
-- [ ] Substraction
-- [ ] Multiplication
-- [ ] Division
-- [ ] Parenthesis
+- [x] Sum
+- [x] Substraction
+- [x] Multiplication
+- [x] Division
+- [x] Parenthesis
 
 ## Instrucctions
 

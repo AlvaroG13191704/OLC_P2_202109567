@@ -14,7 +14,7 @@ var val3 = val1 + ((2 + val2 * 3) + 1 - ((2 * 2 * 2) - 2) * 2) - 2
 print("El valor de val1 es:", val1)
 print("El valor de val2 es:", val2)
 print("El valor de val3 es:", val3)
-print("El resultado de la operación es:", val3)
+print("El resultado de la operacion es:", val3)
 print("El valor de bol es:", bol)
 print("El valor de cad1 es:", cad1)
 print("El valor de cad2 es:", cad2)

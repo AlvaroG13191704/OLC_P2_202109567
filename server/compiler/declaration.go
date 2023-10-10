@@ -47,7 +47,7 @@ func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationCont
 	}
 
 	// gen c3d
-	tempString, stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
+	stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
 
 	symbol := Symbol{
 		Id:             varId,
@@ -57,10 +57,11 @@ func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationCont
 		Value:          varValue,
 		Line:           ctx.GetStart().GetLine(),
 		Column:         ctx.GetStart().GetColumn(),
-		TempString:     tempString,
-		StackDirection: stack - 1,
-		HeapDirection:  heap - 1,
+		StackDirection: stack,
+		HeapDirection:  heap,
 	}
+	// increment the stack
+	v.Generator.CounterStack("+")
 
 	// add the variable to the scope
 	v.getCurrentScope()[varId] = symbol
@@ -100,7 +101,7 @@ func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValu
 		// save the value of the variable as nil
 		varValue := values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
 		// generate temp
-		tempString, stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
+		stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
 
 		symbol := Symbol{
 			Id:             varId,
@@ -110,10 +111,12 @@ func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValu
 			Value:          varValue,
 			Line:           ctx.GetStart().GetLine(),
 			Column:         ctx.GetStart().GetColumn(),
-			TempString:     tempString,
-			StackDirection: stack - 1,
-			HeapDirection:  heap - 1,
+			StackDirection: stack,
+			HeapDirection:  heap,
 		}
+
+		// increment the stack
+		v.Generator.CounterStack("+")
 
 		// add the variable to the scope
 		v.getCurrentScope()[varId] = symbol
@@ -163,10 +166,9 @@ func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) int
 	// get the type of the value
 	varTypeValue := varValue.GetType()
 
-	// generate temp
-	newTemp := v.Generator.NewTemp()
+	// gen c3d
 	// if its int, float or boolean
-	tempString, stack, heap := v.Generator.GenDeclaration(newTemp, varId, varValue)
+	stack, heap := v.Generator.GenDeclaration(varValue.Value, varId, varValue)
 
 	symbol := Symbol{
 		Id:             varId,
@@ -176,10 +178,12 @@ func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) int
 		Value:          varValue,
 		Line:           ctx.GetStart().GetLine(),
 		Column:         ctx.GetStart().GetColumn(),
-		TempString:     tempString,
-		StackDirection: stack - 1,
-		HeapDirection:  heap - 1,
+		StackDirection: stack,
+		HeapDirection:  heap,
 	}
+
+	// increment the stack
+	v.Generator.CounterStack("+")
 
 	// add the variable to the scope
 	v.getCurrentScope()[varId] = symbol
