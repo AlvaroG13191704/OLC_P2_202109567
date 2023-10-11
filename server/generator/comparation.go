@@ -159,96 +159,213 @@ func (g *Generator) GenComparationStringFunc() string {
 }
 
 /*
-void _compare_strings() {
-	t3 = 1; // Initialize t3 to true "less than"
-
+void _compare_stringsGLE() {
+	// Relational Operation for Strings
+	t2 = t0;
+	t3 = t1;
+	t4 = heap[(int) t2];
+	t5 = heap[(int) t3];
+	L0:
+	if(t4 > t5) goto L2;
+	if(t4 == t5) goto L1;
+	goto L3;
 	L1:
-		t4 = heap[(int)t1];
-		t5 = heap[(int)t2];
-
-		if (t4 == -1) goto L2;
-		if (t5 == -1) goto L3;
-
-		if (t4 > t5) goto L3;
-		if (t4 < t5) goto L2;
-
-		t1 = t1 + 1;
-		t2 = t2 + 1;
-		goto L1;
-
-	L2:
-		if (t5 == -1) goto L4;
-		t3 = 0; // Set t3 to false "greater than"
-		goto L4;
-
+	if(t4 == -1) goto L2;
+	t2 = t2 + 1;
+	t3 = t3 + 1;
+	t4 = heap[(int) t2];
+	t5 = heap[(int) t3];
+	goto L0;
 	L3:
-		t3 = 0; // Set t3 to false "greater than"
-
+	t6 = 0;
+	goto L4;
+	L2:
+	t6 = 1;
 	L4:
-		return;
+	return;
 }
 */
 
 // Func to compare strings
-func (g *Generator) GenComparationStringFuncLT() string {
+func (g *Generator) GenComparationStringFuncGLE() string {
+
 	// set false main
 	g.MainCode = false
-	// gen comment
-	g.GenComment("Comparation String less or than")
 
-	// generate labels
-	labelL1 := g.NewLabel()
-	labelL2 := g.NewLabel()
-	label3 := g.NewLabel()
-	labelL4 := g.NewLabel()
-	// generate temps
+	// create temps
+	temp0 := g.NewTemp()
+	g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareGLE = temp0
 	temp1 := g.NewTemp()
-	g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareLT = temp1
+	g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareGLE = temp1
 	temp2 := g.NewTemp()
-	g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareLT = temp2
 	temp3 := g.NewTemp()
 	temp4 := g.NewTemp()
 	temp5 := g.NewTemp()
+	temp6 := g.NewTemp()
+
+	// create labels
+	labelL0 := g.NewLabel()
+	labelL1 := g.NewLabel()
+	labelL2 := g.NewLabel()
+	labelL3 := g.NewLabel()
+	labelL4 := g.NewLabel()
+
 	// code
-	g.FuncCode = append(g.FuncCode, fmt.Sprintf("void _compare_strings_lt() {\n"))
-	// assign true to the temp
-	g.AssignTemp(temp3, "1")
+	g.FuncCode = append(g.FuncCode, fmt.Sprintf("void _compare_stringsGLE() {\n"))
+
+	// t2 = t0;
+	g.AssignTemp(temp2, temp0)
+	// t3 = t1;
+	g.AssignTemp(temp3, temp1)
+	// t4 = heap[(int) t2];
+	g.GetHeap(temp4, temp2)
+	// t5 = heap[(int) t3];
+	g.GetHeap(temp5, temp3)
+	// add label
+	g.AddLabel(labelL0)
+	// if(t4 > t5) goto L2;
+	g.AddIf(temp4, temp5, ">", labelL2)
+	// if(t4 == t5) goto L1;
+	g.AddIf(temp4, temp5, "==", labelL1)
+	// goto L3;
+	g.GoTo(labelL3)
 	// add label
 	g.AddLabel(labelL1)
-	// t4 = heap[(int) t1];
-	g.GetHeap(temp4, temp1)
-	// t5 = heap[(int) t2];
-	g.GetHeap(temp5, temp2)
-	// if (t4 == -1) goto L2;
+	// if(t4 == -1) goto L2;
 	g.AddIf(temp4, "-1", "==", labelL2)
-	// if (t5 == -1) goto L4;
-	g.AddIf(temp5, "-1", "==", label3)
-	// if (t4 > t5) goto L3;
-	g.AddIf(temp4, temp5, ">", label3)
-	// if (t4 < t5) goto L2;
-	g.AddIf(temp4, temp5, "<", labelL2)
-	// t1 = t1 + 1;
-	g.GenArithmetic(temp1, temp1, "1", "+")
 	// t2 = t2 + 1;
 	g.GenArithmetic(temp2, temp2, "1", "+")
-	// goto L1;
-	g.GoTo(labelL1)
+	// t3 = t3 + 1;
+	g.GenArithmetic(temp3, temp3, "1", "+")
+	// t4 = heap[(int) t2];
+	g.GetHeap(temp4, temp2)
+	// t5 = heap[(int) t3];
+	g.GetHeap(temp5, temp3)
+	// goto L0;
+	g.GoTo(labelL0)
+	// add label
+	g.AddLabel(labelL3)
+	// t6 = 0;
+	g.AssignTemp(temp6, "0")
+	// goto L4;
+	g.GoTo(labelL4)
 	// add label
 	g.AddLabel(labelL2)
-	// if(t5 == -1) goto L4;
-	g.AddIf(temp5, "-1", "==", labelL4)
-	// t3 = 0;
-	g.AssignTemp(temp3, "0")
-	// add label
-	g.AddLabel(label3)
-	// t3 = 0;
-	g.AssignTemp(temp3, "0")
+	// t6 = 1;
+	g.AssignTemp(temp6, "1")
 	// add label
 	g.AddLabel(labelL4)
 
 	// end of the function
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("return; \n"))
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("} \n"))
+
 	g.MainCode = true
-	return temp3
+
+	return temp6
+}
+
+/*
+> <
+void _compare_stringsGL() {
+	t2 = t0;
+	t3 = t1;
+	t4 = heap[(int) t2];
+	t5 = heap[(int) t3];
+	L0:
+	if(t4 > t5) goto L2;
+	if(t4 == t5) goto L1;
+	goto L3;
+	L1:
+	if(t4 == -1) goto L3;
+	t2 = t2 + 1;
+	t3 = t3 + 1;
+	t4 = heap[(int) t2];
+	t5 = heap[(int) t3];
+	goto L0;
+	L3:
+	t6 = 0;
+	goto L4;
+	L2:
+	t6 = 1;
+	L4:
+}
+*/
+
+// Func to compare strings
+func (g *Generator) GenComparationStringFuncGL() string {
+	// set false main
+	g.MainCode = false
+
+	// create temps
+	temp0 := g.NewTemp()
+	g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareGL = temp0
+	temp1 := g.NewTemp()
+	g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareGL = temp1
+	temp2 := g.NewTemp()
+	temp3 := g.NewTemp()
+	temp4 := g.NewTemp()
+	temp5 := g.NewTemp()
+	temp6 := g.NewTemp()
+
+	// create labels
+	labelL0 := g.NewLabel()
+	labelL1 := g.NewLabel()
+	labelL2 := g.NewLabel()
+	labelL3 := g.NewLabel()
+	labelL4 := g.NewLabel()
+
+	// code
+	g.FuncCode = append(g.FuncCode, fmt.Sprintf("void _compare_stringsGL() {\n"))
+
+	// t2 = t0;
+	g.AssignTemp(temp2, temp0)
+	// t3 = t1;
+	g.AssignTemp(temp3, temp1)
+	// t4 = heap[(int) t2];
+	g.GetHeap(temp4, temp2)
+	// t5 = heap[(int) t3];
+	g.GetHeap(temp5, temp3)
+	// add label
+	g.AddLabel(labelL0)
+	// if(t4 > t5) goto L2;
+	g.AddIf(temp4, temp5, ">", labelL2)
+	// if(t4 == t5) goto L1;
+	g.AddIf(temp4, temp5, "==", labelL1)
+	// goto L3;
+	g.GoTo(labelL3)
+	// add label
+	g.AddLabel(labelL1)
+	// if(t4 == -1) goto L2;
+	g.AddIf(temp4, "-1", "==", labelL3)
+	// t2 = t2 + 1;
+	g.GenArithmetic(temp2, temp2, "1", "+")
+	// t3 = t3 + 1;
+	g.GenArithmetic(temp3, temp3, "1", "+")
+	// t4 = heap[(int) t2];
+	g.GetHeap(temp4, temp2)
+	// t5 = heap[(int) t3];
+	g.GetHeap(temp5, temp3)
+	// goto L0;
+	g.GoTo(labelL0)
+	// add label
+	g.AddLabel(labelL3)
+	// t6 = 0;
+	g.AssignTemp(temp6, "0")
+	// goto L4;
+	g.GoTo(labelL4)
+	// add label
+	g.AddLabel(labelL2)
+	// t6 = 1;
+	g.AssignTemp(temp6, "1")
+	// add label
+	g.AddLabel(labelL4)
+
+	// end of the function
+	g.FuncCode = append(g.FuncCode, fmt.Sprintf("return; \n"))
+	g.FuncCode = append(g.FuncCode, fmt.Sprintf("} \n"))
+
+	g.MainCode = true
+
+	return temp6
 }

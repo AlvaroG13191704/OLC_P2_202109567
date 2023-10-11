@@ -246,3 +246,24 @@ print(false || true)
 print(false || false)
 
 // Declaration of primitives
+
+
+var val = 5
+var resp = 5
+var valorVerdadero = 100
+var f = true
+
+// possible error in &&
+print((val - val)) && !(!true))
+
+print(valorVerdadero == (50 + 50 + (val - val)) && !(!true))
+
+if (valorVerdadero == (50 + 50 + (val - val))) && (!(!true)) {
+    print("si")
+    valorVerdadero = 50
+} else if (f || (valorVerdadero > 50)) && ((resp != 100) && !(f)) {
+    print("no")
+    valorVerdadero = 70
+} else {
+    print("no 2")
+}

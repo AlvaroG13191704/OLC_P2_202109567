@@ -30,37 +30,17 @@ func (v *Visitor) VisitComparationOperationExpr(ctx *parser.ComparationOperation
 	case "==":
 		if leftValue.GetType() == values.IntType && rightValue.GetType() == values.IntType { // Int == Int
 
-			if !leftValue.IsTemp || !rightValue.IsTemp {
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-
-			} else {
-
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
-				// return the value
-				return values.NewC3DPrimitive(newTemp, temp, values.BooleanType, true)
-
-			}
+			// generate c3d arithmetic operation
+			temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
+			// return the value
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 		} else if leftValue.GetType() == values.FloatType && rightValue.GetType() == values.FloatType { // Float == Float
 
-			if !leftValue.IsTemp || !rightValue.IsTemp {
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-
-			} else {
-
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
-				// return the value
-				return values.NewC3DPrimitive(newTemp, temp, values.BooleanType, true)
-
-			}
+			// generate c3d arithmetic operation
+			temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
+			// return the value
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 		} else if leftValue.GetType() == values.StringType && rightValue.GetType() == values.StringType { // String == String
 
@@ -101,35 +81,19 @@ func (v *Visitor) VisitComparationOperationExpr(ctx *parser.ComparationOperation
 
 		} else if leftValue.GetType() == values.BooleanType && rightValue.GetType() == values.BooleanType { // Boolean == Boolean
 
-			if !leftValue.IsTemp || !rightValue.IsTemp {
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			} else {
+			// generate c3d arithmetic operation
+			temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
+			// return the value
 
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
-				// return the value
-
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			}
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 		} else if leftValue.GetType() == values.CharType && rightValue.GetType() == values.CharType { // Char == Char
 
-			if !leftValue.IsTemp || !rightValue.IsTemp {
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			} else {
+			// generate c3d arithmetic operation
+			temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
+			// return the value
 
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "==")
-				// return the value
-
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			}
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 		} else {
 			// error
@@ -145,38 +109,18 @@ func (v *Visitor) VisitComparationOperationExpr(ctx *parser.ComparationOperation
 	case "!=":
 		if leftValue.GetType() == values.IntType && rightValue.GetType() == values.IntType { // Int != Int
 
-			if !leftValue.IsTemp || !rightValue.IsTemp {
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
-				// return the value
-				// fmt.Println("temp: ", temp)
-				// fmt.Println("newTemp: ", newTemp)
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			} else {
+			temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
+			// return the value
 
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
-				// return the value
-				// fmt.Println("temp: ", temp)
-				// fmt.Println("newTemp: ", newTemp)
-				return values.NewC3DPrimitive(newTemp, temp, values.BooleanType, true)
-			}
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 		} else if leftValue.GetType() == values.FloatType && rightValue.GetType() == values.FloatType { // Float != Float
 
-			if !leftValue.IsTemp || !rightValue.IsTemp {
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			} else {
+			// generate c3d arithmetic operation
+			temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
+			// return the value
 
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
-				// return the value
-
-				return values.NewC3DPrimitive(newTemp, temp, values.BooleanType, true)
-			}
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 		} else if leftValue.GetType() == values.StringType && rightValue.GetType() == values.StringType { // String != String
 
@@ -216,33 +160,17 @@ func (v *Visitor) VisitComparationOperationExpr(ctx *parser.ComparationOperation
 
 		} else if leftValue.GetType() == values.BooleanType && rightValue.GetType() == values.BooleanType { // Boolean != Boolean
 
-			if !leftValue.IsTemp || !rightValue.IsTemp {
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			} else {
-
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			}
+			// generate c3d arithmetic operation
+			temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
+			// return the value
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 		} else if leftValue.GetType() == values.CharType && rightValue.GetType() == values.CharType { // Char != Char
 
-			if !leftValue.IsTemp || !rightValue.IsTemp {
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			} else {
-
-				// generate c3d arithmetic operation
-				temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			}
+			// generate c3d arithmetic operation
+			temp := v.Generator.GenComparation(leftValue.GetValue(), rightValue.GetValue(), "!=")
+			// return the value
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
 		} else {
 			// error

@@ -1,0 +1,81 @@
+Working with If's to C3D
+*************************************************
+high level
+*************************************************
+
+if (a > b ) {
+  [sentencia1]
+} 
+else if (c > d) {
+  [sentencia2]
+}
+else if (e > f) {
+  [sentencia3]
+}
+else if (g > h) {
+  [sentencia4]
+}
+else {
+  [sentencia5]
+}
+
+*************************************************
+low level
+We have to create a list of labels to jump to them at the end
+*************************************************
+if a > b goto L1
+goto L2 
+L1:
+[sentencia1]
+goto L3
+L2:
+---------------------
+if c > d goto L4
+goto L5
+L4:
+[sentencia2]
+goto L6
+L5:
+---------------------
+if e > f goto L7
+goto L8
+L7:
+[sentencia3]
+goto L9
+L8:
+---------------------
+if g > h goto L10
+goto L11
+L10:
+[sentencia4]
+goto L12
+L11:
+---------------------
+[sentencia5]
+---------------------
+L3, L6, L9, L12:
+---------------------
+*************************************************
+
+
+Working with While's to C3D
+*************************************************
+high level
+*************************************************
+while (a > b) {
+  [sentencia1]
+}
+
+*************************************************
+low level
+*************************************************
+
+L3: 
+if a > b goto L1
+goto L2
+L1:
+[sentencia1]
+goto L3
+L2:
+---------------------
+*************************************************

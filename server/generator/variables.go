@@ -40,11 +40,15 @@ type PrintBoolNative struct {
 }
 
 type CompareStringsNative struct {
-	TempFirstStringCompare    string // temp to compare string func
-	TempSecondStringCompare   string // temp to compare string func
-	TempFirstStringCompareLT  string // temp to compare string func
-	TempSecondStringCompareLT string // temp to compare string func
-	IsCompareStringFunc       bool   // if is compare string func
+	TempFirstStringCompare     string // temp to compare string func
+	TempSecondStringCompare    string // temp to compare string func
+	TempFirstStringCompareGLE  string // temp to compare string func
+	TempSecondStringCompareGLE string // temp to compare string func
+	IsCompareStringFuncGLE     bool   // if is compare string func
+	TempFirstStringCompareGL   string // temp to compare string func
+	TempSecondStringCompareGL  string // temp to compare string func
+	IsCompareStringFuncGL      bool   // if is compare string func
+	IsCompareStringFunc        bool   // if is compare string func
 }
 
 type LogicalNative struct {

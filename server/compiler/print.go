@@ -14,6 +14,7 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 	expressiongs := exprList.AllExpr()
 
 	for _, expression := range expressiongs {
+		// v.Generator.GenPrint("c", "10")
 
 		primitive := v.Visit(expression).(*values.C3DPrimitive) // visit the expression
 
@@ -58,16 +59,20 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 			}
 			if primitive.IsTemp {
 				v.Generator.GenPrintString(primitive.GetValue())
+
 			} else {
 
 				temp := v.Generator.GenString(primitive.GetValue())
 				v.Generator.GenPrintString(temp)
 			}
+			v.Generator.GenPrint("c", "10")
+			v.Generator.AddNewLine()
 
 		} else if primitive.GetType() == values.CharType {
 			// generate c3d
 			char := primitive.GetValue()
 			v.Generator.GenPrint("c", fmt.Sprintf("%v", int(char[0])))
+
 			v.Generator.GenPrint("c", "10")
 			v.Generator.AddNewLine()
 
@@ -82,7 +87,6 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 			// call the function
 			v.Generator.Code = append(v.Generator.Code, "_print_bool();\n")
 			// add newl ine
-			v.Generator.GenPrint("c", "32")
 			v.Generator.GenPrint("c", "10")
 			v.Generator.AddNewLine()
 
@@ -91,7 +95,6 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 			v.Generator.GenPrint("c", "110")
 			v.Generator.GenPrint("c", "105")
 			v.Generator.GenPrint("c", "108")
-			v.Generator.GenPrint("c", "32")
 			v.Generator.GenPrint("c", "10")
 			v.Generator.AddNewLine()
 		} else {
@@ -99,6 +102,7 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 			// TODO: add error
 			return nil
 		}
+		// v.Generator.GenPrint("c", "10")
 
 	}
 

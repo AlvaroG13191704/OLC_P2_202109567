@@ -151,14 +151,27 @@ func (g *Generator) GenComparationString(left, right string) {
 }
 
 // Func to compare strings less greater
-func (g *Generator) GenComparationStringLT(left, right string) {
+func (g *Generator) GenComparationStringGLE(left, right string) {
 
 	// add comment
-	g.GenComment("*** compare strings ***")
+	g.GenComment("*** compare strings >= <= ***")
 	// assign temps
-	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareLT, left)
-	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareLT, right)
+	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareGLE, left)
+	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareGLE, right)
 	// call the function
-	g.Code = append(g.Code, "_compare_strings_lt();\n")
+	g.Code = append(g.Code, "_compare_stringsGLE();\n")
+	g.AddNewLine()
+}
+
+// Func to compare strings less greater
+func (g *Generator) GenComparationStringGL(left, right string) {
+
+	// add comment
+	g.GenComment("*** compare strings > < ***")
+	// assign temps
+	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareGL, left)
+	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareGL, right)
+	// call the function
+	g.Code = append(g.Code, "_compare_stringsGL();\n")
 	g.AddNewLine()
 }

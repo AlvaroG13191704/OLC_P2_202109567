@@ -17,8 +17,8 @@ func (g *Generator) GenPrintString(tempIndex string) {
 	// call the function
 	g.Code = append(g.Code, "_printString();\n")
 	// add a %c 32
-	g.GenPrint("c", "32")
-	g.GenPrint("c", "10")
+	// g.GenPrint("c", "32")
+	// g.GenPrint("c", "10")
 	// add a new line
 	g.AddNewLine()
 }

@@ -24,6 +24,12 @@ type Symbol struct {
 	HeapDirection  int
 }
 
+type LoopContext struct {
+	TypeLoop      string
+	ContinueFound bool
+	BreakFound    bool
+}
+
 type Error struct {
 	Line   int
 	Column int
@@ -35,7 +41,9 @@ type Visitor struct {
 	parser.BaseGrammarVisitor
 	Generator   *generator.Generator
 	SymbolStack []map[string]Symbol
-	Errors      []Error
+	// manage loop context
+	loopContexts []LoopContext
+	Errors       []Error
 }
 
 // Manage the scopes
@@ -87,4 +95,32 @@ func (v *Visitor) UpdateVariable(varName string, value interface{}) {
 			return
 		}
 	}
+}
+
+// PushLoopContext push a loop context
+func (v *Visitor) PushLoopContext(typeLoop string) {
+	v.loopContexts = append(v.loopContexts, LoopContext{TypeLoop: typeLoop, ContinueFound: false, BreakFound: false})
+}
+
+// PopLoopContext pop a loop context
+func (v *Visitor) PopLoopContext() {
+	if len(v.loopContexts) > 0 {
+		v.loopContexts = v.loopContexts[:len(v.loopContexts)-1]
+	}
+}
+
+// ExistsLoopContext check if a loop context exists
+func (v *Visitor) ExistsLoopContext() bool {
+	return len(v.loopContexts) > 0
+}
+
+// update the current loop context
+func (v *Visitor) UpdateLoopContext(ctx LoopContext) {
+	v.loopContexts[len(v.loopContexts)-1] = ctx
+}
+
+// GetLoopContext get the current loop context
+func (v *Visitor) GetLoopContext() LoopContext {
+
+	return v.loopContexts[len(v.loopContexts)-1]
 }

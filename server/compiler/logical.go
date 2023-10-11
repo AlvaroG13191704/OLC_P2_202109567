@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"log"
 	"server/compiler/compiler/values"
 	"server/compiler/parser"
@@ -13,8 +14,6 @@ func (v *Visitor) VisitLogicalOperationExpr(ctx *parser.LogicalOperationExprCont
 	rightValue := v.Visit(ctx.GetRight()).(*values.C3DPrimitive)
 
 	sign := ctx.GetOp().GetText() // Get the operator
-
-	// gen new temp
 
 	// add comment
 	v.Generator.GenComment("Logical operation")
@@ -29,27 +28,43 @@ func (v *Visitor) VisitLogicalOperationExpr(ctx *parser.LogicalOperationExprCont
 	case "&&":
 		if leftValue.GetType() == values.BooleanType && rightValue.GetType() == values.BooleanType { // Boolean && Boolean
 
+			fmt.Println("AND")
+			fmt.Println("Left: ", leftValue.GetValue(), "Right: ", rightValue.GetValue())
+
 			if !v.Generator.GeneratorNativeVariables.LogicalNative.IsAndFunc {
 				v.Generator.GenAndFunc()
 				v.Generator.GeneratorNativeVariables.LogicalNative.IsAndFunc = true
-				temp := v.Generator.GenLogical(
-					leftValue.GetValue(),
-					rightValue.GetValue(),
-					v.Generator.GeneratorNativeVariables.LogicalNative.Temp1And,
-					v.Generator.GeneratorNativeVariables.LogicalNative.Temp2And,
-					v.Generator.GeneratorNativeVariables.LogicalNative.TempAndPointer, "and")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			} else {
-				temp := v.Generator.GenLogical(
-					leftValue.GetValue(),
-					rightValue.GetValue(),
-					v.Generator.GeneratorNativeVariables.LogicalNative.Temp1And,
-					v.Generator.GeneratorNativeVariables.LogicalNative.Temp2And,
-					v.Generator.GeneratorNativeVariables.LogicalNative.TempAndPointer, "and")
-				// return the value
-				return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 			}
+			temp := v.Generator.GenLogical(
+				leftValue.GetValue(),
+				rightValue.GetValue(),
+				v.Generator.GeneratorNativeVariables.LogicalNative.Temp1And,
+				v.Generator.GeneratorNativeVariables.LogicalNative.Temp2And,
+				v.Generator.GeneratorNativeVariables.LogicalNative.TempAndPointer, "and")
+			// return the value
+			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
+
+			// if !v.Generator.GeneratorNativeVariables.LogicalNative.IsAndFunc {
+			// 	v.Generator.GenAndFunc()
+			// 	v.Generator.GeneratorNativeVariables.LogicalNative.IsAndFunc = true
+			// 	temp := v.Generator.GenLogical(
+			// 		leftValue.GetValue(),
+			// 		rightValue.GetValue(),
+			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp1And,
+			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp2And,
+			// 		v.Generator.GeneratorNativeVariables.LogicalNative.TempAndPointer, "and")
+			// 	// return the value
+			// 	return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
+			// } else {
+			// 	temp := v.Generator.GenLogical(
+			// 		leftValue.GetValue(),
+			// 		rightValue.GetValue(),
+			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp1And,
+			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp2And,
+			// 		v.Generator.GeneratorNativeVariables.LogicalNative.TempAndPointer, "and")
+			// 	// return the value
+			// 	return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
+			// }
 
 		} else {
 
