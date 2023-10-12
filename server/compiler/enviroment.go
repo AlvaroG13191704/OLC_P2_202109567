@@ -28,6 +28,8 @@ type LoopContext struct {
 	TypeLoop      string
 	ContinueFound bool
 	BreakFound    bool
+	StartLabel    string
+	EndLabel      string
 }
 
 type Error struct {
@@ -44,6 +46,7 @@ type Visitor struct {
 	// manage loop context
 	loopContexts []LoopContext
 	Errors       []Error
+	LabelLoop    string
 }
 
 // Manage the scopes
@@ -99,7 +102,13 @@ func (v *Visitor) UpdateVariable(varName string, value interface{}) {
 
 // PushLoopContext push a loop context
 func (v *Visitor) PushLoopContext(typeLoop string) {
-	v.loopContexts = append(v.loopContexts, LoopContext{TypeLoop: typeLoop, ContinueFound: false, BreakFound: false})
+	v.loopContexts = append(v.loopContexts, LoopContext{
+		TypeLoop:      typeLoop,
+		ContinueFound: false,
+		BreakFound:    false,
+		StartLabel:    "",
+		EndLabel:      "",
+	})
 }
 
 // PopLoopContext pop a loop context

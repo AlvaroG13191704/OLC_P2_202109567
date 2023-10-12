@@ -8,15 +8,17 @@ import (
 
 func (v *Visitor) VisitWhileStmt(ctx *parser.WhileStmtContext) interface{} {
 
-	// push a loop to the loop context
-	v.PushLoopContext("while")
-	defer v.PopLoopContext() // pop the loop context after the execution
-
 	// c3d code
+	// add comment
+	v.Generator.GenComment("While condition")
 	// labels
 	startLabel := v.Generator.NewLabel()
 	// add label
 	v.Generator.AddLabel(startLabel)
+
+	// push a loop to the loop context
+	v.PushLoopContext("while")
+	defer v.PopLoopContext() // pop the loop context after the execution
 
 	// get the condition
 	conditionExpr := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
@@ -33,35 +35,31 @@ func (v *Visitor) VisitWhileStmt(ctx *parser.WhileStmtContext) interface{} {
 		return nil
 	}
 
-	// labels
-	labelTrue := v.Generator.NewLabel()
-	labelFalse := v.Generator.NewLabel()
-	labelEnd := v.Generator.NewLabel()
+	// // labels
+	// // labelTrue := v.Generator.NewLabel()
+	// // labelFalse := v.Generator.NewLabel()
+	// labelEnd := v.Generator.NewLabel()
+	// v.LabelLoop = labelEnd
+	// // labelBreak := v.Generator.NewLabel()
 
-	// add comment
-	v.Generator.GenComment("While condition")
-	// generate if
-	v.Generator.AddIf("(int)"+conditionExpr.GetValue(), "1", "==", labelTrue)
-	v.Generator.GoTo(labelFalse)
-	v.Generator.AddLabel(labelTrue)
-	// visit block 1
-	v.Visit(ctx.Block())
+	// // evaluate if there is a break in the loop
+	// if isBreak := v.GetLoopContext().BreakFound; isBreak {
+	// 	// add comment
+	// 	v.Generator.GenComment("Break stmt")
+	// 	// add label end
+	// 	v.Generator.GoTo(labelEnd)
+	// }
 
-	// TODO: evaluate if there is a continue
+	// // generate if
+	// v.Generator.AddIf("(int)"+conditionExpr.GetValue(), "0", "==", labelEnd)
+	// v.Visit(ctx.Block())
+	// v.Generator.GoTo(startLabel)
+	// // visit block 1
 
-	// evaluate if there is a break in the loop
-	if isBreak := v.GetLoopContext().BreakFound; isBreak {
-		// add comment
-		v.Generator.GenComment("Break stmt")
-		// add label end
-		v.Generator.GoTo(labelEnd)
-	}
-	// go to end
-	v.Generator.GoTo(startLabel)
-	// add label false
-	v.Generator.AddLabel(labelFalse)
-	// add label end
-	v.Generator.AddLabel(labelEnd)
+	// // TODO: evaluate if there is a continue
+
+	// // go to end
+	// v.Generator.AddLabel(labelEnd)
 
 	return nil
 }

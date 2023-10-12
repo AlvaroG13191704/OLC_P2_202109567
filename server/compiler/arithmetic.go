@@ -206,7 +206,7 @@ func (v *Visitor) VisitArithmeticOperationExpr(ctx *parser.ArithmeticOperationEx
 
 			// fmt.Println("Int / Int")
 			// generate c3d arithmetic operation
-			v.Generator.GenArithmetic(newTemp, leftValue.GetValue(), rightValue.GetValue(), "/")
+			v.Generator.GenArithmetic(newTemp, "(int)"+leftValue.GetValue(), "(int)"+rightValue.GetValue(), "/")
 
 			// return the value
 			return values.NewC3DPrimitive(newTemp, newTemp, values.IntType, true)
@@ -215,7 +215,7 @@ func (v *Visitor) VisitArithmeticOperationExpr(ctx *parser.ArithmeticOperationEx
 
 			// fmt.Println("Int / Float")
 			// generate c3d arithmetic operation
-			v.Generator.GenArithmetic(newTemp, leftValue.GetValue(), rightValue.GetValue(), "/")
+			v.Generator.GenArithmetic(newTemp, "(int)"+leftValue.GetValue(), "(int)"+rightValue.GetValue(), "/")
 
 			// return the value
 			return values.NewC3DPrimitive(newTemp, newTemp, values.FloatType, true)

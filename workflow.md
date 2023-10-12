@@ -16,3 +16,14 @@
 
 ### Backend
 - [x] Conectar el backend con el frontend.
+
+
+#### Calificaction Files
+- [x] Basicas
+- [ ] Embebidas
+- [ ] Intermedias
+- [ ] Recursivas
+- [ ] Vectores
+- [ ] Struct1
+- [ ] Struct2
+- [ ] Matrices
