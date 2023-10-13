@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"log"
 	"server/compiler/parser"
 )
@@ -20,6 +21,11 @@ func (v *Visitor) VisitBreakStmt(ctx *parser.BreakStmtContext) interface{} {
 
 			// update the loop context
 			v.UpdateLoopContext(loopContext)
+
+			// add comment
+			v.Generator.GenComment("Break statement")
+			// go to end
+			v.Generator.GoTo(loopContext.EndLabel)
 
 		} else {
 			v.Errors = append(v.Errors, Error{
@@ -50,7 +56,7 @@ func (v *Visitor) VisitContinueStmt(ctx *parser.ContinueStmtContext) interface{}
 
 	// evaluate if the current context is inside a loop
 	if v.ExistsLoopContext() {
-		// fmt.Println("continue found--------")
+		fmt.Println("continue found--------")
 		// update the loop context
 		loopContext := v.GetLoopContext()
 
@@ -60,6 +66,11 @@ func (v *Visitor) VisitContinueStmt(ctx *parser.ContinueStmtContext) interface{}
 
 			// update the loop context
 			v.UpdateLoopContext(loopContext)
+
+			// add comment
+			v.Generator.GenComment("Continue statement")
+			// go to start
+			v.Generator.GoTo(loopContext.StartLabel)
 
 		} else {
 			v.Errors = append(v.Errors, Error{

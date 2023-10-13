@@ -36,14 +36,16 @@ func (v *Visitor) VisitValueAssignment(ctx *parser.ValueAssignmentContext) inter
 		// evaluate if the type of the variable is the same of the expr
 		if typeVariable == expr.GetType() || typeVariable == values.NilType {
 			// gen c3d
+			fmt.Println("value assignment -> ", value)
 			v.Generator.GenAssignment(
 				value.Value.(*values.C3DPrimitive).GetValue(),
 				idName, value.StackDirection,
 				value.Value.(*values.C3DPrimitive),
-				expr.GetValue(),
+				expr,
 			)
 			// update the value
 			value.Value = expr
+
 			// update the value no matter the scope
 			v.UpdateVariable(idName, value)
 

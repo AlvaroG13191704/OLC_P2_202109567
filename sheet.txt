@@ -79,3 +79,11 @@ goto L3
 L2:
 ---------------------
 *************************************************
+
+for i in 0...9 {
+    print(i)
+}
+
+C3D:
+
+// guardar en stack el valor izquierda y derecha

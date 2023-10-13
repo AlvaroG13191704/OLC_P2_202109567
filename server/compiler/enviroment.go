@@ -100,14 +100,26 @@ func (v *Visitor) UpdateVariable(varName string, value interface{}) {
 	}
 }
 
+// AssignVariable assign a variable to the current scope -> works for loops
+func (v *Visitor) AssignVariable(varName string, value interface{}) {
+	scope := v.getCurrentScope()
+	scope[varName] = value.(Symbol)
+}
+
+// DeleteVariable delete a variable from the current scope -> works for loops
+func (v *Visitor) DeleteVariable(varName string) {
+	scope := v.getCurrentScope()
+	delete(scope, varName)
+}
+
 // PushLoopContext push a loop context
-func (v *Visitor) PushLoopContext(typeLoop string) {
+func (v *Visitor) PushLoopContext(typeLoop string, startLabel string, endLabel string) {
 	v.loopContexts = append(v.loopContexts, LoopContext{
 		TypeLoop:      typeLoop,
 		ContinueFound: false,
 		BreakFound:    false,
-		StartLabel:    "",
-		EndLabel:      "",
+		StartLabel:    startLabel,
+		EndLabel:      endLabel,
 	})
 }
 

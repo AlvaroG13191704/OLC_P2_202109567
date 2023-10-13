@@ -6,13 +6,19 @@ import (
 )
 
 // Function to generate c3d when a variable is assign
-func (g *Generator) GenAssignment(tempString, id string, pointerStack int, value *values.C3DPrimitive, expr string) {
+func (g *Generator) GenAssignment(tempString, id string, pointerStack int, value *values.C3DPrimitive, expr *values.C3DPrimitive) {
+
+	fmt.Println("Value to assign ->", value)
+	if value.GetType() == values.StringType && expr.IsTemp {
+		g.SaveStack(fmt.Sprintf("%d", pointerStack), expr.GetValue())
+
+		return
+	}
 
 	if value.GetType() == values.StringType {
-		tempPointer := g.GenString(expr)
+		tempPointer := g.GenString(expr.GetValue())
 		// add comment
-		// add comment
-		g.GenComment("Assigment of variable: ", id, ":", value.GetType(), "=", "'", expr, "'")
+		g.GenComment("Assigment of variable: ", id, ":", value.GetType(), "=", "'", expr.GetValue(), "'")
 		// add the variable to the stack
 		g.SaveStack(fmt.Sprintf("%d", pointerStack), tempPointer)
 
@@ -21,9 +27,9 @@ func (g *Generator) GenAssignment(tempString, id string, pointerStack int, value
 	}
 
 	// add comment
-	g.GenComment("Assigment of variable: ", id, ":", value.GetType(), "= ", "'", expr, "'")
+	g.GenComment("Assigment of variable: ", id, ":", value.GetType(), "= ", "'", expr.GetValue(), "'")
 	// add the variable to the stack
-	g.SaveStack(fmt.Sprintf("%d", pointerStack), expr)
+	g.SaveStack(fmt.Sprintf("%d", pointerStack), expr.GetValue())
 
 }
 
