@@ -46,7 +46,6 @@ type Visitor struct {
 	// manage loop context
 	loopContexts []LoopContext
 	Errors       []Error
-	LabelLoop    string
 }
 
 // Manage the scopes

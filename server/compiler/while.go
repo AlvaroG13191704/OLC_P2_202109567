@@ -10,7 +10,6 @@ func (v *Visitor) VisitWhileStmt(ctx *parser.WhileStmtContext) interface{} {
 	// temps
 	startLabel := v.Generator.NewLabel()
 	labelEnd := v.Generator.NewLabel()
-	v.LabelLoop = labelEnd
 	// add comment
 	v.Generator.GenComment("While condition")
 	// labels

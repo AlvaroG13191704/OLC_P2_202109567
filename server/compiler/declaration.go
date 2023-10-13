@@ -47,7 +47,7 @@ func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationCont
 	}
 
 	// gen c3d
-	stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
+	stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue, v.ExistsLoopContext())
 
 	symbol := Symbol{
 		Id:             varId,
@@ -101,7 +101,7 @@ func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValu
 		// save the value of the variable as nil
 		varValue := values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
 		// generate temp
-		stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue)
+		stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue, v.ExistsLoopContext())
 
 		symbol := Symbol{
 			Id:             varId,
@@ -167,32 +167,32 @@ func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) int
 	varTypeValue := varValue.GetType()
 
 	// gen c3d
-	if v.ExistsLoopContext() {
-		// TODO: add code
-	} else {
+	// if v.ExistsLoopContext() {
+	// 	// TODO: add code
+	// } else {
+	// }
 
-		fmt.Println("value -->>", varValue)
-		// if its int, float or boolean
-		stack, heap := v.Generator.GenDeclaration(varValue.Value, varId, varValue)
+	fmt.Println("value -->>", varValue)
+	// if its int, float or boolean
+	stack, heap := v.Generator.GenDeclaration(varValue.Value, varId, varValue, v.ExistsLoopContext())
 
-		symbol := Symbol{
-			Id:             varId,
-			TypeSymbol:     values.Variable_Type,
-			TypeMutable:    varType,
-			TypeData:       varTypeValue,
-			Value:          varValue,
-			Line:           ctx.GetStart().GetLine(),
-			Column:         ctx.GetStart().GetColumn(),
-			StackDirection: stack,
-			HeapDirection:  heap,
-		}
-
-		// increment the stack
-		v.Generator.CounterStack("+")
-
-		// add the variable to the scope
-		v.getCurrentScope()[varId] = symbol
+	symbol := Symbol{
+		Id:             varId,
+		TypeSymbol:     values.Variable_Type,
+		TypeMutable:    varType,
+		TypeData:       varTypeValue,
+		Value:          varValue,
+		Line:           ctx.GetStart().GetLine(),
+		Column:         ctx.GetStart().GetColumn(),
+		StackDirection: stack,
+		HeapDirection:  heap,
 	}
+
+	// increment the stack
+	v.Generator.CounterStack("+")
+
+	// add the variable to the scope
+	v.getCurrentScope()[varId] = symbol
 
 	// apppend to the TableSymbol
 	// v.TableSymbol = append(v.TableSymbol, symbol)

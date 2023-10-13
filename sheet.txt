@@ -79,11 +79,54 @@ goto L3
 L2:
 ---------------------
 *************************************************
-
-for i in 0...9 {
-    print(i)
+let numero = 2
+switch numero {
+case 1:
+print("Uno")
+case 2:
+print("Dos")
+case 3:
+print("Tres")
+default:
+print("Invalid day")
 }
 
-C3D:
+C3D CODE
 
-// guardar en stack el valor izquierda y derecha
+t0 = 2
+stack[P] = t0
+P = P + 1
+
+t1 = stack[1]
+
+
+L1 -> salida
+L2 -> case2
+L3 -> case3
+L4 -> case4
+L5 -> default
+
+-- case1
+if (t1 != 1) goto L2
+[block]
+goto L1
+
+-- case2
+L2:
+if (t1 != 2) goto L3
+[block]
+goto L1
+
+-- case3
+L3:
+if (t1 != 3) goto L4
+[block]
+goto L1
+
+-- default
+L4:
+[block]
+goto L1
+
+-- salida
+L1:

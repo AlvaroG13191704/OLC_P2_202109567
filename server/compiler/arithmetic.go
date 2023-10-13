@@ -89,7 +89,7 @@ func (v *Visitor) VisitArithmeticOperationExpr(ctx *parser.ArithmeticOperationEx
 			fmt.Println("initPointer", initPointer)
 			// gen code to assign the pointer
 			v.Generator.GenConcatString(tempLeft, tempRight)
-			return values.NewC3DPrimitive(initPointer, newTemp, values.StringType, true)
+			return values.NewC3DPrimitive(v.Generator.GeneratorNativeVariables.ConcatNative.TempInitConcat, newTemp, values.StringType, true)
 			// return values.NewC3DPrimitive(initPointer, newTemp, values.StringType, true)
 
 		} else {

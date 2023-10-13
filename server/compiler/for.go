@@ -23,7 +23,7 @@ func (v *Visitor) VisitForRangeExpr(ctx *parser.ForRangeExprContext) interface{}
 	}
 	// declare the variable c3d
 	// generate temp
-	stack, heap := v.Generator.GenDeclaration(leftValue.GetTemp(), loopVarName, leftValue)
+	stack, heap := v.Generator.GenDeclaration(leftValue.GetTemp(), loopVarName, leftValue, v.ExistsLoopContext())
 
 	// increment the stack
 	v.Generator.CounterStack("+")
@@ -43,7 +43,6 @@ func (v *Visitor) VisitForRangeExpr(ctx *parser.ForRangeExprContext) interface{}
 	// temps
 	startLabel := v.Generator.NewLabel()
 	labelEnd := v.Generator.NewLabel()
-	v.LabelLoop = labelEnd
 	// add comment
 	v.Generator.GenComment("--------- For range condition ---------")
 	// labels
