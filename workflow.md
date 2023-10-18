@@ -20,10 +20,11 @@
 
 #### Calificaction Files
 - [x] Basicas
-- [ ] Embebidas
-- [ ] Intermedias
-- [ ] Recursivas
+- [x] Intermedias
 - [ ] Vectores
+- [ ] Embebidas
+- [ ] Recursivas
 - [ ] Struct1
 - [ ] Struct2
 - [ ] Matrices
+

@@ -178,11 +178,11 @@ type GrammarVisitor interface {
 	// Visit a parse tree produced by GrammarParser#CountVector.
 	VisitCountVector(ctx *CountVectorContext) interface{}
 
-	// Visit a parse tree produced by GrammarParser#AccessVectorStruct.
-	VisitAccessVectorStruct(ctx *AccessVectorStructContext) interface{}
-
 	// Visit a parse tree produced by GrammarParser#AccessVector.
 	VisitAccessVector(ctx *AccessVectorContext) interface{}
+
+	// Visit a parse tree produced by GrammarParser#AccessVectorStruct.
+	VisitAccessVectorStruct(ctx *AccessVectorStructContext) interface{}
 
 	// Visit a parse tree produced by GrammarParser#StructCallFunction.
 	VisitStructCallFunction(ctx *StructCallFunctionContext) interface{}

@@ -89,3 +89,9 @@ func (v *Visitor) VisitNotExpr(ctx *parser.NotExprContext) interface{} {
 
 	// return values.NewC3DPrimitive(values.NilType, "", values.NilType, false)
 }
+
+// VisitCallBackExpr -> Visit a parse tree produced by SFGrammarParser#CallBackExpr.
+func (v *Visitor) VisitCallBackExpr(ctx *parser.CallBackExprContext) interface{} {
+
+	return v.Visit(ctx.CallBack())
+}

@@ -19,6 +19,7 @@ type Symbol struct {
 	// the following attributes are for the generator
 	Id             string // the name of the variable
 	Value          interface{}
+	LenghtVector   int
 	CodeSentence   string
 	StackDirection int
 	HeapDirection  int

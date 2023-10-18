@@ -378,17 +378,17 @@ func (s *BaseGrammarListener) EnterCountVector(ctx *CountVectorContext) {}
 // ExitCountVector is called when production CountVector is exited.
 func (s *BaseGrammarListener) ExitCountVector(ctx *CountVectorContext) {}
 
-// EnterAccessVectorStruct is called when production AccessVectorStruct is entered.
-func (s *BaseGrammarListener) EnterAccessVectorStruct(ctx *AccessVectorStructContext) {}
-
-// ExitAccessVectorStruct is called when production AccessVectorStruct is exited.
-func (s *BaseGrammarListener) ExitAccessVectorStruct(ctx *AccessVectorStructContext) {}
-
 // EnterAccessVector is called when production AccessVector is entered.
 func (s *BaseGrammarListener) EnterAccessVector(ctx *AccessVectorContext) {}
 
 // ExitAccessVector is called when production AccessVector is exited.
 func (s *BaseGrammarListener) ExitAccessVector(ctx *AccessVectorContext) {}
+
+// EnterAccessVectorStruct is called when production AccessVectorStruct is entered.
+func (s *BaseGrammarListener) EnterAccessVectorStruct(ctx *AccessVectorStructContext) {}
+
+// ExitAccessVectorStruct is called when production AccessVectorStruct is exited.
+func (s *BaseGrammarListener) ExitAccessVectorStruct(ctx *AccessVectorStructContext) {}
 
 // EnterStructCallFunction is called when production StructCallFunction is entered.
 func (s *BaseGrammarListener) EnterStructCallFunction(ctx *StructCallFunctionContext) {}

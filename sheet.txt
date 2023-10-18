@@ -130,3 +130,55 @@ goto L1
 
 -- salida
 L1:
+
+
+ecuation row - major = (i * n) + j
+i = row
+j = column
+n = number of columns
+------- Working with vectors TIPS -------------------
+Guardar en el entorno, donde inicia el vector
+Obtener donde termina el vector
+heap[INICIO_VECTOR + LONGITUD_VECTOR + 1]
+
+ejemplo
+et var = [1,2,3,4]
+C3D
+heap [
+  4 -> longitud
+  1
+  2
+  3
+  4
+]
+
+high level
+
+C3D
+t0 = H
+heap[H] = 4
+H = H + 1
+heap[H] = 1
+H = H + 1
+heap[H] = 2
+H = H + 1
+heap[H] = 3
+H = H + 1
+heap[H] = 4
+H = H + 1
+
+stack[P] = t0
+
+var arr2 = arr1
+
+C3D
+t0 = stack[P]
+stack[P] = t0
+var arr: [Int] = [1,2,3,4]
+arr.removeLast
+
+C3D
+t0 = stack[P]
+t1 = heap[t0]
+t2 = t1 - 1
+

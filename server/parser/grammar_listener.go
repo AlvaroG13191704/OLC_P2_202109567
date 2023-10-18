@@ -178,11 +178,11 @@ type GrammarListener interface {
 	// EnterCountVector is called when entering the CountVector production.
 	EnterCountVector(c *CountVectorContext)
 
-	// EnterAccessVectorStruct is called when entering the AccessVectorStruct production.
-	EnterAccessVectorStruct(c *AccessVectorStructContext)
-
 	// EnterAccessVector is called when entering the AccessVector production.
 	EnterAccessVector(c *AccessVectorContext)
+
+	// EnterAccessVectorStruct is called when entering the AccessVectorStruct production.
+	EnterAccessVectorStruct(c *AccessVectorStructContext)
 
 	// EnterStructCallFunction is called when entering the StructCallFunction production.
 	EnterStructCallFunction(c *StructCallFunctionContext)
@@ -436,11 +436,11 @@ type GrammarListener interface {
 	// ExitCountVector is called when exiting the CountVector production.
 	ExitCountVector(c *CountVectorContext)
 
-	// ExitAccessVectorStruct is called when exiting the AccessVectorStruct production.
-	ExitAccessVectorStruct(c *AccessVectorStructContext)
-
 	// ExitAccessVector is called when exiting the AccessVector production.
 	ExitAccessVector(c *AccessVectorContext)
+
+	// ExitAccessVectorStruct is called when exiting the AccessVectorStruct production.
+	ExitAccessVectorStruct(c *AccessVectorStructContext)
 
 	// ExitStructCallFunction is called when exiting the StructCallFunction production.
 	ExitStructCallFunction(c *StructCallFunctionContext)

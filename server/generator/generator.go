@@ -132,6 +132,16 @@ func (g *Generator) IncPointerHeap() {
 	g.HeapCounter = g.HeapCounter + 1
 }
 
+// decrement pointer heap
+func (g *Generator) DecPointerHeap() {
+	if g.MainCode {
+		g.Code = append(g.Code, "H = H - 1;\n")
+	} else {
+		g.FuncCode = append(g.FuncCode, "H = H - 1;\n")
+	}
+	g.HeapCounter = g.HeapCounter - 1
+}
+
 // increment counter
 func (g *Generator) CounterStack(which string) {
 	if which == "+" {
@@ -255,6 +265,17 @@ func (g *Generator) SaveHeap(tempString string) {
 		g.Code = append(g.Code, saveHeap)
 	} else {
 		saveHeap := fmt.Sprintf("heap[(int)H] = %s; \n", tempString)
+		g.FuncCode = append(g.FuncCode, saveHeap)
+	}
+}
+
+// save heap with index
+func (g *Generator) SaveHeapIndex(tempString, index string) {
+	if g.MainCode {
+		saveHeap := fmt.Sprintf("heap[(int)%s] = %s; \n", index, tempString)
+		g.Code = append(g.Code, saveHeap)
+	} else {
+		saveHeap := fmt.Sprintf("heap[(int)%s] = %s; \n", index, tempString)
 		g.FuncCode = append(g.FuncCode, saveHeap)
 	}
 }

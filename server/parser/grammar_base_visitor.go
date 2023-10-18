@@ -235,11 +235,11 @@ func (v *BaseGrammarVisitor) VisitCountVector(ctx *CountVectorContext) interface
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseGrammarVisitor) VisitAccessVectorStruct(ctx *AccessVectorStructContext) interface{} {
+func (v *BaseGrammarVisitor) VisitAccessVector(ctx *AccessVectorContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseGrammarVisitor) VisitAccessVector(ctx *AccessVectorContext) interface{} {
+func (v *BaseGrammarVisitor) VisitAccessVectorStruct(ctx *AccessVectorStructContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
