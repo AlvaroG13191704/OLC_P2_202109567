@@ -14,6 +14,7 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 	expressiongs := exprList.AllExpr()
 
 	for _, expression := range expressiongs {
+		fmt.Println("Status functionCode: ", v.Generator.FunctionCode, v.Generator.MainCode)
 		// v.Generator.GenPrint("c", "10")
 
 		primitive := v.Visit(expression).(*values.C3DPrimitive) // visit the expression

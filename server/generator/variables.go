@@ -14,6 +14,17 @@ type GeneratorNativeVariables struct {
 	CompareStringsNative CompareStringsNative
 	// logical
 	LogicalNative LogicalNative
+	// embebbed
+	EmbebbedNative EmbebbedNative
+}
+
+type EmbebbedNative struct {
+	IsEmbebbedFunc1                     bool   // if is embebbed func
+	IsEmbebbedFunc2                     bool   // if is embebbed func
+	TempDigitStringConvertoToIntOrFloat string // temp to convert string to int or float
+	TempDigitToString                   string // temp to convert string to bool
+	TempReturnValue1                    string // temp to return value
+	TempReturnValue2                    string // temp to return value
 }
 
 type PrintNative struct {

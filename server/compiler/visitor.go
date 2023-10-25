@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"log"
 	"server/compiler/generator"
 	"server/compiler/parser"
@@ -38,6 +39,21 @@ func (v *Visitor) VisitStart(ctx *parser.StartContext) interface{} {
 func (v *Visitor) VisitBlock(ctx *parser.BlockContext) interface{} {
 	// push the scope
 	v.pushScope()
+	// declare all the functions
+	if !v.FirstPass {
+		fmt.Println("FIRST TRAVEL ")
+		for _, stmt := range ctx.AllStmts() {
+			if stmt.FunctionStmt() != nil {
+				v.Visit(stmt.FunctionStmt())
+			}
+		}
+		v.FirstPass = true
+		// print the symbol table
+		fmt.Println("----------------------------------------------------")
+		fmt.Println("Current scope or symbol table ->", v.getCurrentScope())
+		fmt.Println("Global scope or symbol table ->", v.SymbolStack)
+		fmt.Println("----------------------------------------------------")
+	}
 
 	for _, stmt := range ctx.AllStmts() {
 		v.Visit(stmt)

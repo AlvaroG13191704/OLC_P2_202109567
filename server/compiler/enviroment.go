@@ -8,15 +8,19 @@ import (
 )
 
 type Symbol struct {
+	// general
 	TypeSymbol  string // the type of the symbol variable or function, vector, reference, or matrix
 	TypeMutable string // the type of the variable -> var or let
 	TypeData    string // the type of the data -> Int, Float, String, Boolean, Character
-	StructOf    string // the name of the struct that contains the variable
-	ListParams  interface{}
-	Mutating    bool
 	Line        int
 	Column      int
-	// the following attributes are for the generator
+	// Function attributes
+	ListParams  interface{}
+	ReturnType  string
+	ReturnTemp  string
+	ReturnLabel string
+
+	// variables attributes
 	Id             string // the name of the variable
 	Value          interface{}
 	LenghtVector   int
@@ -47,6 +51,8 @@ type Visitor struct {
 	// manage loop context
 	loopContexts []LoopContext
 	Errors       []Error
+	// function
+	FirstPass bool
 }
 
 // Manage the scopes
@@ -73,6 +79,18 @@ func (v *Visitor) VerifyVariableCurrentScope(varName string) bool {
 		// evaluate if the variable is not a function
 		return variable.TypeSymbol == values.Variable_Type
 
+	}
+	return false
+}
+
+// Verify if the variale is in the scope only return true or false
+func (v *Visitor) VerifyVariable(varName string) bool {
+
+	for i := len(v.SymbolStack) - 1; i >= 0; i-- {
+		scope := v.SymbolStack[i]
+		if _, ok := scope[varName]; ok {
+			return true
+		}
 	}
 	return false
 }
@@ -144,4 +162,29 @@ func (v *Visitor) UpdateLoopContext(ctx LoopContext) {
 func (v *Visitor) GetLoopContext() LoopContext {
 
 	return v.loopContexts[len(v.loopContexts)-1]
+}
+
+// VerifyFunctionScope verify if the function is already declared in the current scope
+func (v *Visitor) VerifyFunctionScope(varName string) bool {
+
+	scope := v.SymbolStack[len(v.SymbolStack)-1]
+	if variable, ok := scope[varName]; ok {
+		// evaluate if the variable is a function
+		return variable.TypeSymbol == values.Function_Type
+
+	}
+	return false
+}
+
+// GetFunction from the scope
+func (v *Visitor) GetFunction(varName string) (Symbol, bool) {
+	for i := len(v.SymbolStack) - 1; i >= 0; i-- {
+		scope := v.SymbolStack[i]
+		if val, ok := scope[varName]; ok {
+			if val.TypeSymbol == values.Function_Type {
+				return val, true
+			}
+		}
+	}
+	return Symbol{}, false
 }

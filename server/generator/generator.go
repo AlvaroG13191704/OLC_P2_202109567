@@ -16,9 +16,11 @@ type Generator struct {
 	Compiled                 []interface{}            // list of compiled code
 	FinalCode                []interface{}            // list of final code
 	FuncCode                 []interface{}
+	FuncionUser              []interface{}
 	BreakLabel               string // break label
 	ContinueLabel            string // continue label
 	MainCode                 bool
+	FunctionCode             bool
 }
 
 func NewGenerator() *Generator {
@@ -67,6 +69,10 @@ func (g Generator) GetFuncCode() []interface{} {
 	return g.FuncCode
 }
 
+func (g Generator) GetFuncionUser() []interface{} {
+	return g.FuncionUser
+}
+
 func (g Generator) GetFinalCode() string {
 
 	var resultString string
@@ -78,6 +84,14 @@ func (g Generator) GetFinalCode() string {
 
 	// get the code generated
 	codeGenerated := g.GetFuncCode()
+	// return string
+	for _, v := range codeGenerated {
+		resultString += v.(string)
+	}
+
+	// get the code generated
+	codeGenerated = g.GetFuncionUser()
+
 	// return string
 	for _, v := range codeGenerated {
 		resultString += v.(string)
@@ -102,7 +116,9 @@ func (g Generator) GetFinalCode() string {
 
 // increment pointer stack
 func (g *Generator) IncPointerStack() {
-	if g.MainCode {
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "P = P + 1;\n")
+	} else if g.MainCode {
 		g.Code = append(g.Code, "P = P + 1;\n")
 	} else {
 		g.FuncCode = append(g.FuncCode, "P = P + 1;\n")
@@ -114,7 +130,9 @@ func (g *Generator) IncPointerStack() {
 
 // decrement pointer stack
 func (g *Generator) DecPointerStack() {
-	if g.MainCode {
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "P = P - 1;\n")
+	} else if g.MainCode {
 		g.Code = append(g.Code, "P = P - 1;\n")
 	} else {
 		g.FuncCode = append(g.FuncCode, "P = P - 1;\n")
@@ -124,7 +142,9 @@ func (g *Generator) DecPointerStack() {
 
 // increment pointer heap
 func (g *Generator) IncPointerHeap() {
-	if g.MainCode {
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "H = H + 1;\n")
+	} else if g.MainCode {
 		g.Code = append(g.Code, "H = H + 1;\n")
 	} else {
 		g.FuncCode = append(g.FuncCode, "H = H + 1;\n")
@@ -134,7 +154,9 @@ func (g *Generator) IncPointerHeap() {
 
 // decrement pointer heap
 func (g *Generator) DecPointerHeap() {
-	if g.MainCode {
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "H = H - 1;\n")
+	} else if g.MainCode {
 		g.Code = append(g.Code, "H = H - 1;\n")
 	} else {
 		g.FuncCode = append(g.FuncCode, "H = H - 1;\n")
@@ -152,19 +174,11 @@ func (g *Generator) CounterStack(which string) {
 
 }
 
-// // add break lvl
-// func (g *Generator) AddBreak(lvl string) {
-// 	g.BreakLabel = lvl
-// }
-
-// // add continue lvl
-// func (g *Generator) AddContinue(lvl string) {
-// 	g.ContinueLabel = lvl
-// }
-
 // add a \n
 func (g *Generator) AddNewLine() {
-	if g.MainCode {
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "\n")
+	} else if g.MainCode {
 		g.Code = append(g.Code, "\n")
 	} else {
 		g.FuncCode = append(g.FuncCode, "\n")
@@ -189,7 +203,9 @@ func (g *Generator) NewLabel() string {
 
 // add a goto
 func (g *Generator) GoTo(label string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, fmt.Sprintf("goto %s;\n", label))
+	} else if g.MainCode {
 		g.Code = append(g.Code, fmt.Sprintf("goto %s;\n", label))
 	} else {
 		g.FuncCode = append(g.FuncCode, fmt.Sprintf("goto %s;\n", label))
@@ -198,7 +214,9 @@ func (g *Generator) GoTo(label string) {
 
 // add a label
 func (g *Generator) AddLabel(label string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, fmt.Sprintf("%s: \n", label))
+	} else if g.MainCode {
 		g.Code = append(g.Code, fmt.Sprintf("%s: \n", label))
 	} else {
 		g.FuncCode = append(g.FuncCode, fmt.Sprintf("%s: \n", label))
@@ -207,7 +225,9 @@ func (g *Generator) AddLabel(label string) {
 
 // generate comment, receive a list of string args
 func (g *Generator) GenComment(args ...string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "// "+strings.Join(args, " ")+"\n")
+	} else if g.MainCode {
 		g.Code = append(g.Code, "// "+strings.Join(args, " ")+"\n")
 	} else {
 		g.FuncCode = append(g.FuncCode, "// "+strings.Join(args, " ")+"\n")
@@ -216,7 +236,11 @@ func (g *Generator) GenComment(args ...string) {
 
 // save stack
 func (g *Generator) SaveStack(varName, tempString string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		saveStack := fmt.Sprintf("stack[(int)%s] = %s; \n", varName, tempString)
+		g.FuncionUser = append(g.FuncionUser, saveStack)
+	} else if g.MainCode {
 		saveStack := fmt.Sprintf("stack[(int)%s] = %s; \n", varName, tempString)
 		g.Code = append(g.Code, saveStack)
 	} else {
@@ -227,7 +251,11 @@ func (g *Generator) SaveStack(varName, tempString string) {
 
 // Assing stack
 func (g *Generator) AssignStack(valueP int, tempString string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		assingStack := fmt.Sprintf("stack[(int)P + %v] = %s; \n", valueP, tempString)
+		g.FuncionUser = append(g.FuncionUser, assingStack)
+	} else if g.MainCode {
 		assingStack := fmt.Sprintf("stack[(int)P + %v] = %s; \n", valueP, tempString)
 		g.Code = append(g.Code, assingStack)
 	} else {
@@ -238,7 +266,11 @@ func (g *Generator) AssignStack(valueP int, tempString string) {
 
 // get stack
 func (g *Generator) GetStack(tempString, valueP string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		getStack := fmt.Sprintf("%s = stack[(int) %s]; \n", tempString, valueP)
+		g.FuncionUser = append(g.FuncionUser, getStack)
+	} else if g.MainCode {
 		getStack := fmt.Sprintf("%s = stack[(int) %s]; \n", tempString, valueP)
 		g.Code = append(g.Code, getStack)
 	} else {
@@ -249,7 +281,11 @@ func (g *Generator) GetStack(tempString, valueP string) {
 
 // get heap
 func (g *Generator) GetHeap(tempString, valueH string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		getHeap := fmt.Sprintf("%s = heap[(int) %s]; \n", tempString, valueH)
+		g.FuncionUser = append(g.FuncionUser, getHeap)
+	} else if g.MainCode {
 		getHeap := fmt.Sprintf("%s = heap[(int) %s]; \n", tempString, valueH)
 		g.Code = append(g.Code, getHeap)
 	} else {
@@ -260,7 +296,11 @@ func (g *Generator) GetHeap(tempString, valueH string) {
 
 // Save heap
 func (g *Generator) SaveHeap(tempString string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		saveHeap := fmt.Sprintf("heap[(int)H] = %s; \n", tempString)
+		g.FuncionUser = append(g.FuncionUser, saveHeap)
+	} else if g.MainCode {
 		saveHeap := fmt.Sprintf("heap[(int)H] = %s; \n", tempString)
 		g.Code = append(g.Code, saveHeap)
 	} else {
@@ -271,7 +311,11 @@ func (g *Generator) SaveHeap(tempString string) {
 
 // save heap with index
 func (g *Generator) SaveHeapIndex(tempString, index string) {
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		saveHeap := fmt.Sprintf("heap[(int)%s] = %s; \n", index, tempString)
+		g.FuncionUser = append(g.FuncionUser, saveHeap)
+	} else if g.MainCode {
 		saveHeap := fmt.Sprintf("heap[(int)%s] = %s; \n", index, tempString)
 		g.Code = append(g.Code, saveHeap)
 	} else {
@@ -284,7 +328,10 @@ func (g *Generator) SaveHeapIndex(tempString, index string) {
 func (g *Generator) AssignTemp(tempString string, value string) string {
 
 	assingTemp := fmt.Sprintf("%s = %s; \n", tempString, value)
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		g.FuncionUser = append(g.FuncionUser, assingTemp)
+	} else if g.MainCode {
 		g.Code = append(g.Code, assingTemp)
 	} else {
 		g.FuncCode = append(g.FuncCode, assingTemp)
@@ -295,7 +342,10 @@ func (g *Generator) AssignTemp(tempString string, value string) string {
 // Access stack
 func (g *Generator) AccessStack(tempString string, index string) string {
 	accessStack := fmt.Sprintf("%s = stack[(int)%s];\n", tempString, index)
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		g.FuncionUser = append(g.FuncionUser, accessStack)
+	} else if g.MainCode {
 		g.Code = append(g.Code, accessStack)
 	} else {
 		g.FuncCode = append(g.FuncCode, accessStack)
@@ -307,7 +357,10 @@ func (g *Generator) AccessStack(tempString string, index string) string {
 // add If statement
 func (g *Generator) AddIf(left, right, operator, label string) {
 	ifStatement := fmt.Sprintf("if (%s %s %s) goto %s;\n", left, operator, right, label)
-	if g.MainCode {
+	if g.FunctionCode {
+		// TODO: refactor here
+		g.FuncionUser = append(g.FuncionUser, ifStatement)
+	} else if g.MainCode {
 		g.Code = append(g.Code, ifStatement)
 	} else {
 

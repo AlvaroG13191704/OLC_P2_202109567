@@ -11,21 +11,40 @@ func (g *Generator) GenArithmetic(target, left, right, operator string) {
 			g.GenDivisionZero()
 			g.GeneratorNativeVariables.ZeroNative.IsPosibleDivisionZero = true
 		}
-		// generate label
-		labelEnd := g.NewLabel()
-		// assign the temp to the tempDivisionZero
-		g.AssignTemp(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, right)
-		// call the function
-		g.Code = append(g.Code, "_zero_division();\n")
-		// evaluate if the tempDivisionZero is 1
-		g.AddIf(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, "1", "==", labelEnd)
-		// add the code
-		g.Code = append(g.Code, fmt.Sprintf("%s = %s %s %s;\n", target, left, operator, right))
-		// add label
-		g.AddLabel(labelEnd)
+
+		if g.FunctionCode {
+			// generate label
+			labelEnd := g.NewLabel()
+			// assign the temp to the tempDivisionZero
+			g.AssignTemp(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, right)
+			// call the function
+			g.FuncionUser = append(g.FuncionUser, "_zero_division();\n")
+			// evaluate if the tempDivisionZero is 1
+			g.AddIf(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, "1", "==", labelEnd)
+			// add the code
+			g.FuncionUser = append(g.FuncionUser, fmt.Sprintf("%s = %s %s %s;\n", target, left, operator, right))
+			// add label
+			g.AddLabel(labelEnd)
+		} else {
+
+			// generate label
+			labelEnd := g.NewLabel()
+			// assign the temp to the tempDivisionZero
+			g.AssignTemp(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, right)
+			// call the function
+			g.Code = append(g.Code, "_zero_division();\n")
+			// evaluate if the tempDivisionZero is 1
+			g.AddIf(g.GeneratorNativeVariables.ZeroNative.TempDivisionZero, "1", "==", labelEnd)
+			// add the code
+			g.Code = append(g.Code, fmt.Sprintf("%s = %s %s %s;\n", target, left, operator, right))
+			// add label
+			g.AddLabel(labelEnd)
+		}
 
 	} else {
-		if g.MainCode {
+		if g.FunctionCode {
+			g.FuncionUser = append(g.FuncionUser, fmt.Sprintf("%s = %s %s %s;\n", target, left, operator, right))
+		} else if g.MainCode {
 			g.Code = append(g.Code, fmt.Sprintf("%s = %s %s %s;\n", target, left, operator, right))
 		} else {
 			g.FuncCode = append(g.FuncCode, fmt.Sprintf("%s = %s %s %s;\n", target, left, operator, right))
@@ -37,7 +56,14 @@ func (g *Generator) GenArithmetic(target, left, right, operator string) {
 func (g *Generator) GenDivisionZero() {
 
 	// set false main
+	var temBool bool
+	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
+
 	// g.TempDivisionZero = tempZero
 	g.GeneratorNativeVariables.ZeroNative.TempDivisionZero = g.NewTemp()
 
@@ -71,6 +97,11 @@ func (g *Generator) GenDivisionZero() {
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("return; \n"))
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("} \n"))
 
-	// set false main
 	g.MainCode = true
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 }

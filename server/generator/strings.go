@@ -4,9 +4,13 @@ import "fmt"
 
 // Global Function to print strings
 func (g *Generator) GenerateFuncToPrint() {
-
+	var temBool bool
 	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
 
 	g.GeneratorNativeVariables.PrintNative.TempToPrint = g.NewTemp()
 	g.GeneratorNativeVariables.PrintNative.TempToEvaluateEndString = g.NewTemp()
@@ -33,14 +37,27 @@ func (g *Generator) GenerateFuncToPrint() {
 	g.FuncCode = append(g.FuncCode, "return; \n")
 	g.FuncCode = append(g.FuncCode, "} \n")
 	// set false main code
+
 	g.MainCode = true
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 
 }
 
 // Function to concat strings
 func (g *Generator) ConcantStrings() string {
+	var temBool bool
 	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
+
 	// generate temps
 	initHeapPointer := g.NewTemp()
 	g.GeneratorNativeVariables.ConcatNative.TempInitConcat = initHeapPointer
@@ -95,8 +112,13 @@ func (g *Generator) ConcantStrings() string {
 	g.FuncCode = append(g.FuncCode, "return; \n")
 	g.FuncCode = append(g.FuncCode, "} \n")
 
-	// return to main code
 	g.MainCode = true
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 
 	return initHeapPointer
 }
@@ -134,7 +156,11 @@ func (g *Generator) GenConcatString(left, right string) {
 	g.AssignTemp(g.GeneratorNativeVariables.ConcatNative.TempFirstConcat, left)
 	g.AssignTemp(g.GeneratorNativeVariables.ConcatNative.TempSecondConcat, right)
 	// call the function
-	g.Code = append(g.Code, "_concatString();\n")
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "_concatString();\n")
+	} else {
+		g.Code = append(g.Code, "_concatString();\n")
+	}
 	g.AddNewLine()
 }
 
@@ -146,7 +172,11 @@ func (g *Generator) GenComparationString(left, right string) {
 	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompare, left)
 	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompare, right)
 	// call the function
-	g.Code = append(g.Code, "_compare_strings();\n")
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "_compare_strings();\n")
+	} else {
+		g.Code = append(g.Code, "_compare_strings();\n")
+	}
 	g.AddNewLine()
 }
 
@@ -159,7 +189,11 @@ func (g *Generator) GenComparationStringGLE(left, right string) {
 	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareGLE, left)
 	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareGLE, right)
 	// call the function
-	g.Code = append(g.Code, "_compare_stringsGLE();\n")
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "_compare_stringsGLE();\n")
+	} else {
+		g.Code = append(g.Code, "_compare_stringsGLE();\n")
+	}
 	g.AddNewLine()
 }
 
@@ -172,6 +206,10 @@ func (g *Generator) GenComparationStringGL(left, right string) {
 	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempFirstStringCompareGL, left)
 	g.AssignTemp(g.GeneratorNativeVariables.CompareStringsNative.TempSecondStringCompareGL, right)
 	// call the function
-	g.Code = append(g.Code, "_compare_stringsGL();\n")
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, "_compare_stringsGL();\n")
+	} else {
+		g.Code = append(g.Code, "_compare_stringsGL();\n")
+	}
 	g.AddNewLine()
 }

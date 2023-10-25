@@ -1,0 +1,179 @@
+- El primer segmento de memoria a tener en cuenta son los parametros
+
+- La idea de cuando se declaran funciones es guardar donde inicia la función y tomarla como un segmento de memoria, 
+  y luego guardar los parametros que se le pasan a la función en ese segmento de memoria.
+
+- Cada vez que querramos llamar a un proc almacenado, reservar espacio en el stack. El tamaño 
+  depende por ejemplo si tiene 3 parametros, 3 variables locales y una de retorno entonce serian 7 espacios.
+
+- El puntero P tiene la base del segmento de memoria que le pertenece al proc que estamos produciendo.
+
+- Pueden haber 4 subsegmentos: parametros, variables locales, variables temporales y variables de retorno.
+
+ejemplo
+---tamaño----
+0 - int y - parametro 1
+1 - int x - parametro 2
+2 - int z - parametro 3
+3 - int b - variable local
+4 - int c - variable local
+5 - int d - variable local
+-------------
+proc ab(int x, int y, int z) {
+  int b;
+  int c;
+  b = 5;
+  c = 2;
+  int d;
+  d =b+c*x/z-y;
+}
+
+C3D code
+
+proc ab_int_int_int() {
+  t0 = p + 3;
+  stack[t0] =  5;
+  t1 = p + 4;
+  stack[t1] =  2;
+  t2 = p + 5; -- indice de d
+
+  t3 = p + 3;
+  t4 = stack[t3]; -- valor de b
+  t5 = p + 4;
+  t6 = stack[t5]; -- valor de c
+  t7 = p + 0;
+  t8 = stack[t7]; -- valor de x
+  t18 = t6 * t8; -- c*x
+  t9 = p + 2;
+  t10 = stack[t9]; -- valor de z
+  t19 = t18 / t10; -- c*x/z
+  t11 = p + 1;
+  t12 = stack[t11]; -- valor de y
+  t20 = t19 - t12; -- c*x/z-y
+  t21 = t4 + t20; -- b + c*x/z-y
+  stack[t2] = t21; -- d = b + c*x/z-y
+}
+-----------------
+0 - int x - parametro 1
+1 - int y - parametro 2
+2 - int z - parametro 3
+3 - int w - variable local
+4 - int   - valor de retorno
+Tamaño -> 5 invocados
+-------------------------
+
+function int a (int x, int y, int z) {
+  int w;
+  w = x+y+z;
+  w= w*100;
+  return w;
+}
+
+C3D code
+proc ab_int_int_int() {
+  t1 = p + 3;
+  t2 = p + 0;
+  t3 = stack[t2];
+  t4 = p + 1;
+  t5 = stack[t4];
+  t6 = t3 + t5;
+  t7 = p + 2;
+  t8 = stack[t7];
+  t9 = t6 + t8;
+  stack[t1] = t9;
+  t10 = p + 3; -- hacer asignacion
+  t11 = p + 3; -- obener valor
+  t12 = stack[t11];
+  t13 = t12 * 100;
+  stack[t10] = t13;
+  t14 = p + 4;
+  t15 = p + 3;
+  t16 = stack[t15];
+  stack[t14] = t16;
+  goto L1;
+  L1:
+  return;
+}
+
+--------------------------------
+#include <stdio.h>
+#include <math.h>
+float heap[1000000];
+float stack[1000000];
+float SP;
+float HP;
+float t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17;
+
+/------NATIVES------/
+void _printNull_(){
+	printf("%c", 110);
+	printf("%c", 117);
+	printf("%c", 108);
+	printf("%c", 108);
+	return;
+}
+
+/------FUNCTIONS------/
+void resta() {
+//Expression: Access Variable
+t0 = SP + 0;
+t1 = stack[(int)t0];
+
+//Expression: Access Variable
+t2 = SP + 1;
+t3 = stack[(int)t2];
+
+t4 = t1 - t3;
+
+t5 = 2 + SP;
+stack[(int)t5] = t4;
+goto L0;
+
+L0:
+return;
+}
+
+/------MAIN------/
+void main() {
+	SP = 0;
+	HP = 0;
+
+	//Variable Declaration
+	t6 = 0;
+	stack[(int)t6] = 1;
+	
+	//Variable Declaration
+	t7 = 1;
+	stack[(int)t7] = 1;
+	
+	//------------------| Print |------------------ 
+	//Expression: Access Variable
+	t9 = stack[0];
+	
+	//Expression: Access Variable
+	t11 = stack[1];
+	
+	t12 = SP;
+	t13 = SP + 2;
+	t14 = t13+0;
+	stack[(int)t14] = t9;
+	t15 = t13+1;
+	stack[(int)t15] = t11;
+	SP = SP + 2;
+	resta();
+	t17 = SP + 2;
+	t16 = stack[(int)t17];
+	SP = SP - 2;
+	if(t16 != 9999999827968) goto L1;
+	_printNull_();
+	goto L2;
+	L1:
+	printf("%d", (int)t16);
+	printf("%c", 32);
+	L2:
+	printf("%c", 10);
+	//------------------| End Print |------------------ 
+	
+
+	return;
+}

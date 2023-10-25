@@ -18,8 +18,13 @@ return;
 
 // Generate func to compare and
 func (g *Generator) GenAndFunc() {
-	// set false main
+	var temBool bool
+	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
 
 	// generate labels
 	labelEnd := g.NewLabel()
@@ -57,7 +62,12 @@ func (g *Generator) GenAndFunc() {
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("}\n"))
 
 	g.MainCode = true
-
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 }
 
 /*
@@ -75,8 +85,13 @@ return;
 
 // Generate func to compare or
 func (g *Generator) GenOrFunc() {
-	// set false main
+	var temBool bool
+	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
 
 	// generate labels
 	labelEnd := g.NewLabel()
@@ -114,6 +129,12 @@ func (g *Generator) GenOrFunc() {
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("}\n"))
 
 	g.MainCode = true
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 
 }
 
@@ -131,9 +152,13 @@ return;
 
 // Generate not
 func (g *Generator) GenNotFunc() {
-	// set false main
+	var temBool bool
+	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
-
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
 	// generate labels
 	labelEnd := g.NewLabel()
 	labelTrue := g.NewLabel()
@@ -166,6 +191,12 @@ func (g *Generator) GenNotFunc() {
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("}\n"))
 
 	g.MainCode = true
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 }
 
 // Generate logical func
@@ -183,7 +214,11 @@ func (g *Generator) GenLogical(left, right, temp1, temp2, temp3, funcName string
 		g.AssignTemp(temp2, right)
 	}
 	// call func
-	g.Code = append(g.Code, fmt.Sprintf("_%s();\n", funcName))
+	if g.FunctionCode {
+		g.FuncionUser = append(g.FuncionUser, fmt.Sprintf("_%s();\n", funcName))
+	} else {
+		g.Code = append(g.Code, fmt.Sprintf("_%s();\n", funcName))
+	}
 
 	return temp3
 }

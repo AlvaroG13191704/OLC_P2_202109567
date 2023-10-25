@@ -32,24 +32,9 @@ func (v *Visitor) VisitAccessVector(ctx *parser.AccessVectorContext) interface{}
 	}
 	symbolValue := value.(Symbol)
 
+	var indexInt int64
 	// get the index
 	index := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
-
-	// conver to int
-	indexInt, _ := strconv.ParseInt(index.GetValue(), 10, 64)
-
-	// evaluate if the index is out of bounds
-	if indexInt < 0 || indexInt >= int64(symbolValue.LenghtVector) {
-		log.Printf("Error: Index '%d' is out of bounds \n", index.GetValue())
-		// add error
-		v.Errors = append(v.Errors, Error{
-			Line:   ctx.GetStart().GetLine(),
-			Column: ctx.GetStart().GetColumn(),
-			Msg:    fmt.Sprintf("Error: Index '%d' is out of bounds", index.GetValue()),
-			Type:   "Semantic",
-		})
-		return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
-	}
 
 	// evaluate if the index is a number
 	if index.GetType() != values.IntType {
@@ -65,6 +50,24 @@ func (v *Visitor) VisitAccessVector(ctx *parser.AccessVectorContext) interface{}
 		return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
 	}
 
+	if !index.GetIsTemp() {
+		// conver to int
+		indexInt, _ = strconv.ParseInt(index.GetValue(), 10, 64)
+
+		// evaluate if the index is out of bounds
+		if indexInt < 0 || indexInt >= int64(symbolValue.LenghtVector) {
+			log.Printf("Error: Index '%d' is out of bounds \n", indexInt)
+			// add error
+			v.Errors = append(v.Errors, Error{
+				Line:   ctx.GetStart().GetLine(),
+				Column: ctx.GetStart().GetColumn(),
+				Msg:    fmt.Sprintf("Error: Index '%d' is out of bounds", indexInt),
+				Type:   "Semantic",
+			})
+			return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
+		}
+	}
+
 	// primitive
 	tempIterator := v.Generator.NewTemp()
 	tempValue := v.Generator.NewTemp()
@@ -75,7 +78,12 @@ func (v *Visitor) VisitAccessVector(ctx *parser.AccessVectorContext) interface{}
 	v.Generator.GenArithmetic(tempLenght, tempIterator, "1", "+")
 
 	// sum the index to the iterator
-	v.Generator.GenArithmetic(tempIterator, tempIterator, fmt.Sprintf("%d", indexInt+1), "+")
+	if index.GetIsTemp() {
+		v.Generator.GenArithmetic(index.GetValue(), index.GetValue(), "1", "+")
+		v.Generator.GenArithmetic(tempIterator, tempIterator, index.GetValue(), "+")
+	} else {
+		v.Generator.GenArithmetic(tempIterator, tempIterator, fmt.Sprintf("%d", indexInt+1), "+")
+	}
 	// get the value from the heap
 	v.Generator.GetHeap(tempValue, tempIterator)
 
@@ -121,7 +129,7 @@ func (v *Visitor) VisitAppendVector(ctx *parser.AppendVectorContext) interface{}
 	}
 
 	var TempsString string
-	if expr.GetType() == values.StringType {
+	if expr.GetType() == values.StringType && !expr.GetIsTemp() {
 		tempString := v.Generator.GenString(expr.GetValue())
 		// add to the list of temps
 		TempsString = tempString
@@ -393,6 +401,26 @@ func (v *Visitor) VisitRemoveAtVector(ctx *parser.RemoveAtVectorContext) interfa
 	// get the index
 	index := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
 
+	var numINdex int64
+
+	if !index.GetIsTemp() {
+		// convert the index from int64 to int
+		numINdex, _ := strconv.ParseInt(index.GetValue(), 10, 64)
+
+		// evaluate if the index is out of bounds
+		if numINdex < 0 || numINdex >= int64(symbolValue.LenghtVector) {
+			log.Printf("Error: Index '%d' is out of bounds \n", numINdex)
+			// add error
+			v.Errors = append(v.Errors, Error{
+				Line:   ctx.GetStart().GetLine(),
+				Column: ctx.GetStart().GetColumn(),
+				Msg:    fmt.Sprintf("Error: Index '%d' is out of bounds", numINdex),
+				Type:   "Semantic",
+			})
+			return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
+		}
+	}
+
 	// evaluate if the index is a number
 	if index.GetType() != values.IntType {
 		log.Printf("Error: Index '%s' is not a number \n", index.GetValue())
@@ -406,21 +434,6 @@ func (v *Visitor) VisitRemoveAtVector(ctx *parser.RemoveAtVectorContext) interfa
 		return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
 	}
 
-	// convert the index from int64 to int
-	numINdex, _ := strconv.ParseInt(index.GetValue(), 10, 64)
-
-	// evaluate if the index is out of bounds
-	if numINdex < 0 || numINdex >= int64(symbolValue.LenghtVector) {
-		log.Printf("Error: Index '%d' is out of bounds \n", index.GetValue())
-		// add error
-		v.Errors = append(v.Errors, Error{
-			Line:   ctx.GetStart().GetLine(),
-			Column: ctx.GetStart().GetColumn(),
-			Msg:    fmt.Sprintf("Error: Index '%d' is out of bounds", index.GetValue()),
-			Type:   "Semantic",
-		})
-		return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
-	}
 	// c3d code
 	// generate temps
 	tempLenght := v.Generator.NewTemp()

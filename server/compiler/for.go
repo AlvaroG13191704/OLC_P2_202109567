@@ -139,3 +139,79 @@ func (v *Visitor) VisitForRange(ctx *parser.ForRangeContext) interface{} {
 		}
 	}
 }
+
+// VisitForExpr visit forExpr
+func (v *Visitor) VisitForExpr(ctx *parser.ForExprContext) interface{} {
+	var loopVarName string = "_"
+	if ctx.ID_PRIMITIVE() != nil {
+		// get the loopVarName
+		loopVarName = ctx.ID_PRIMITIVE().GetText()
+	}
+
+	// get the id from expr
+	idName := ctx.Expr().GetText()
+	// search the variable in the scope
+	ok := v.VerifyVariable(idName)
+	// evaluate if the name is declared
+	if ok {
+
+		// now get the value from the scope
+		_, ok := v.VerifyScope(idName)
+
+		if !ok {
+
+			// add the error to the errors
+			log.Fatalf("Error: Variable '%s' not declared", idName)
+			v.Errors = append(v.Errors, Error{
+				Line:   ctx.GetStart().GetLine(),
+				Column: ctx.GetStart().GetColumn(),
+				Msg:    "Variable '" + idName + "' not declared",
+				Type:   "VariableError",
+			})
+			return nil
+		}
+
+		// symbolValue := valueFromScope.(Symbol)
+	}
+
+	// if it's not a variable, it's only a string
+	// get the expr
+	expr := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
+
+	// c3d code
+	// temps
+	tempPointer := v.Generator.GenString(expr.GetValue())
+	v.Generator.GenComment("--------- Saving the iterator ---------")
+	v.Generator.SaveStack("P", tempPointer)
+	heap := v.Generator.HeapCounter
+	stack := v.Generator.StackCounter
+	v.Generator.IncPointerStack()
+	// increment the stack
+	v.Generator.CounterStack("+")
+	// assign the value to the loopVarName
+	v.AssignVariable(loopVarName, Symbol{
+		Id:             loopVarName,
+		TypeSymbol:     values.Variable_Type,
+		TypeMutable:    values.LetMutable,
+		TypeData:       expr.GetType(),
+		Value:          expr,
+		Line:           ctx.GetStart().GetLine(),
+		Column:         ctx.GetStart().GetColumn(),
+		StackDirection: stack,
+		HeapDirection:  heap,
+	})
+	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
+	// temps
+	startLabel := v.Generator.NewLabel()
+	labelEnd := v.Generator.NewLabel()
+	// add comment
+	v.Generator.GenComment("--------- For expression ---------")
+	// labels
+	// add label
+	v.Generator.AddLabel(startLabel)
+	// push a loop to the loop context
+	v.PushLoopContext("for", startLabel, labelEnd)
+	defer v.PopLoopContext() // pop the loop context after the execution
+
+	return nil
+}

@@ -4,7 +4,14 @@ import "fmt"
 
 func (g *Generator) GenPrintBoolFunc() {
 	// set false main
+	var temBool bool
+	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
+
 	g.GeneratorNativeVariables.PrintBoolNative.TempBoolFunc = g.NewTemp()
 	// generate labels
 	labelIfTrue := g.NewLabel()
@@ -33,6 +40,12 @@ func (g *Generator) GenPrintBoolFunc() {
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("} \n"))
 
 	g.MainCode = true
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 }
 
 // t1 = 1;
@@ -60,47 +73,17 @@ func (g *Generator) GenComparation(left, right, sign string) string {
 
 }
 
-/*
-c3d code
-t1 = first string address
-t2 = second string address
-t3 = equal or not temp
-t4 = iterator first string
-t5 = iterator second string
-
-void _compare_strings() {
-	t3 = 1; // Initialize t3 to true
-
-	L1:
-		t4 = heap[(int)t1];
-		t5 = heap[(int)t2];
-
-		if (t4 == -1) goto L2;
-		if (t5 == -1) goto L3;
-
-		if (t4 != t5) goto L3;
-
-		t1 = t1 + 1;
-		t2 = t2 + 1;
-		goto L1;
-
-	L2:
-		if (t5 == -1) goto L4;
-		t3 = 0; // Set t3 to false
-		goto L4;
-
-	L3:
-		t3 = 0; // Set t3 to false
-
-	L4:
-		return;
-}
-*/
-
 // Func to compare strings
 func (g *Generator) GenComparationStringFunc() string {
 	// set false main
+	var temBool bool
+	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
+
 	// gen comment
 	g.GenComment("Comparation String")
 	// generate labels
@@ -154,43 +137,28 @@ func (g *Generator) GenComparationStringFunc() string {
 	// end of the function
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("return; \n"))
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("} \n"))
+
 	g.MainCode = true
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 	return temp3
 }
-
-/*
-void _compare_stringsGLE() {
-	// Relational Operation for Strings
-	t2 = t0;
-	t3 = t1;
-	t4 = heap[(int) t2];
-	t5 = heap[(int) t3];
-	L0:
-	if(t4 > t5) goto L2;
-	if(t4 == t5) goto L1;
-	goto L3;
-	L1:
-	if(t4 == -1) goto L2;
-	t2 = t2 + 1;
-	t3 = t3 + 1;
-	t4 = heap[(int) t2];
-	t5 = heap[(int) t3];
-	goto L0;
-	L3:
-	t6 = 0;
-	goto L4;
-	L2:
-	t6 = 1;
-	L4:
-	return;
-}
-*/
 
 // Func to compare strings
 func (g *Generator) GenComparationStringFuncGLE() string {
 
 	// set false main
+	var temBool bool
+	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
 
 	// create temps
 	temp0 := g.NewTemp()
@@ -261,41 +229,25 @@ func (g *Generator) GenComparationStringFuncGLE() string {
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("} \n"))
 
 	g.MainCode = true
-
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 	return temp6
 }
-
-/*
-> <
-void _compare_stringsGL() {
-	t2 = t0;
-	t3 = t1;
-	t4 = heap[(int) t2];
-	t5 = heap[(int) t3];
-	L0:
-	if(t4 > t5) goto L2;
-	if(t4 == t5) goto L1;
-	goto L3;
-	L1:
-	if(t4 == -1) goto L3;
-	t2 = t2 + 1;
-	t3 = t3 + 1;
-	t4 = heap[(int) t2];
-	t5 = heap[(int) t3];
-	goto L0;
-	L3:
-	t6 = 0;
-	goto L4;
-	L2:
-	t6 = 1;
-	L4:
-}
-*/
 
 // Func to compare strings
 func (g *Generator) GenComparationStringFuncGL() string {
 	// set false main
+	var temBool bool
+	// set false main code
+	temBool = g.FunctionCode
 	g.MainCode = false
+	if g.FunctionCode {
+		g.FunctionCode = false
+	}
 
 	// create temps
 	temp0 := g.NewTemp()
@@ -366,6 +318,12 @@ func (g *Generator) GenComparationStringFuncGL() string {
 	g.FuncCode = append(g.FuncCode, fmt.Sprintf("} \n"))
 
 	g.MainCode = true
+	if g.FunctionCode {
+		g.FunctionCode = true
+	}
+	if temBool {
+		g.FunctionCode = true
+	}
 
 	return temp6
 }

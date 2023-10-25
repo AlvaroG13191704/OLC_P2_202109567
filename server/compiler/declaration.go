@@ -166,7 +166,7 @@ func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) int
 	// get the type of the value
 	varTypeValue := varValue.GetType()
 
-	fmt.Println("value -->>", varValue)
+	fmt.Println("value -->>", v.Generator.FunctionCode)
 	// if its int, float or boolean
 	stack, heap := v.Generator.GenDeclaration(varValue.Value, varId, varValue, v.ExistsLoopContext())
 
