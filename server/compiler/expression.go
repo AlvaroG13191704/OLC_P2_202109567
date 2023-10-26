@@ -10,7 +10,6 @@ import (
 // visit idexpr
 func (v *Visitor) VisitIdExpr(ctx *parser.IdExprContext) interface{} {
 	id := ctx.GetText() // get the id
-	// fmt.Println("Id -> ", id)
 
 	// verify if the id is in the scope or others
 	variable, ok := v.VerifyScope(id)
@@ -20,8 +19,13 @@ func (v *Visitor) VisitIdExpr(ctx *parser.IdExprContext) interface{} {
 		if value.Value.(*values.C3DPrimitive).GetType() == values.NilType {
 			return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
 		}
-		// t0 = stack[(int)0 ]
 		temp := v.Generator.NewTemp()
+		if v.Generator.FunctionCode {
+			// gen comment
+			v.Generator.GenComment("Access to variable inside function")
+			// assign
+			v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", value.StackDirection), "+")
+		}
 		v.Generator.AccessStack(temp, fmt.Sprintf("%d", value.StackDirection))
 		// change temp
 		return values.NewC3DPrimitive(temp, temp, value.TypeData, true)

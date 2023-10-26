@@ -3,19 +3,16 @@ package compiler
 import (
 	"fmt"
 	"log"
+	"server/compiler/compiler/values"
 	"server/compiler/parser"
 )
 
 // CallFunctionExpr
 func (v *Visitor) VisitCallFunctionExpr(ctx *parser.CallFunctionExprContext) interface{} {
-	v.Visit(ctx.CallFunctionStmt())
-	// visit the expression
-	// // change the return value
-	// v.IsReturn = false
-	// fmt.Println("VisitCallFunctionExpr", v.ReturnValue)
+	valueExpr := v.Visit(ctx.CallFunctionStmt()).(*values.C3DPrimitive)
 
-	// return v.ReturnValue
-	return nil
+	return valueExpr
+
 }
 
 // VisitCallFunctionWithoutParams
@@ -37,35 +34,24 @@ func (v *Visitor) VisitCallFunctionWithoutParams(ctx *parser.CallFunctionWithout
 		return nil
 	}
 
-	// verifiy if the return value type is the same as the function return type
-	if function.ReturnType == "void" {
-		// add error
-		v.Errors = append(v.Errors, Error{
-			Line:   ctx.GetStart().GetLine(),
-			Column: ctx.GetStart().GetColumn(),
-			Msg:    fmt.Sprintf("function '%s' is void", functionName),
-			Type:   "Semantic",
-		})
-		log.Printf("function '%s' is void", functionName)
-		return nil
-	} else {
-		// execute the function
-		// v.Visit(function.Value.(*parser.BlockContext))
+	// create temp
+	temp := v.Generator.NewTemp()
+	// assign the P to the temp
+	v.Generator.AssignTemp(temp, "P")
 
-		// // evaluate if the return type is the same as the function return type
-		// if function.TypeVariable != v.ReturnValue.(values.PRIMITIVE).GetType() {
-		// 	// add error
-		// 	v.Errors = append(v.Errors, Error{
-		// 		Line:   ctx.GetStart().GetLine(),
-		// 		Column: ctx.GetStart().GetColumn(),
-		// 		Msg:    fmt.Sprintf("function %s return type is %s, expected %s", functionName, function.TypeVariable, v.ReturnValue.(values.PRIMITIVE).GetType()),
-		// 		Type:   "Semantic",
-		// 	})
-		// 	log.Printf("function %s return type is %s, expected %s", functionName, function.TypeVariable, v.ReturnValue.(values.PRIMITIVE).GetType())
-		// 	return nil
-		// }
+	// add the function
+	v.Generator.Code = append(v.Generator.Code, fmt.Sprintf("%s();\n", function.Id))
 
-		return nil
+	var tempReturn string
+	// verifiy if there is a return value
+	if function.ReturnType != "void" {
+		// create temp
+		tempReturn = v.Generator.NewTemp()
+		// assign the return value to the temp
+		v.Generator.AssignTemp(tempReturn, v.ReturnTemp)
+
 	}
+
+	return values.NewC3DPrimitive(tempReturn, function.ReturnTemp, function.ReturnType, true)
 
 }

@@ -3,10 +3,14 @@ package compiler
 import (
 	"fmt"
 	"log"
+	"server/compiler/compiler/values"
 	"server/compiler/parser"
 )
 
 func (v *Visitor) VisitFunctionWithoutParams(ctx *parser.FunctionWithoutParamsContext) interface{} {
+	// push a new function context
+	v.PushFunctionContext("function")
+	defer v.PopFunctionContext()
 	// get the id
 	idFunction := ctx.ID_PRIMITIVE().GetText()
 	// verify if the function is already declared
@@ -22,13 +26,24 @@ func (v *Visitor) VisitFunctionWithoutParams(ctx *parser.FunctionWithoutParamsCo
 		return nil
 	}
 
+	// create temps to return and save the label
+	if ctx.ARROW_FUNCTION() != nil {
+		v.ReturnLabel = v.Generator.NewLabel()
+		v.ReturnTemp = v.Generator.NewTemp()
+	}
 	// work with functions -> without params and return
+	v.SizeFunction = 0 // restart the size of the function
 	// set false
 	v.Generator.FunctionCode = true
 	// gen c3d
 	v.Generator.FuncionUser = append(v.Generator.FuncionUser, fmt.Sprintf("void %s(){\n", idFunction))
 	// visit block
 	v.Visit(ctx.Block())
+
+	// add return if there is return value
+	if ctx.ARROW_FUNCTION() != nil {
+		v.Generator.AddLabel(v.ReturnLabel)
+	}
 	// set false
 	v.Generator.FunctionCode = false
 	// gen c3d
@@ -36,43 +51,50 @@ func (v *Visitor) VisitFunctionWithoutParams(ctx *parser.FunctionWithoutParamsCo
 	// close function
 	v.Generator.FuncionUser = append(v.Generator.FuncionUser, "}\n")
 
-	// // get the return type if it exists
-	// var returnType string
-	// if ctx.ARROW_FUNCTION() != nil {
-	// 	returnType = ctx.Type_().GetText()
-	// 	// save the function in the symbol table
-	// 	symbol := Symbol{
-	// 		Id:           idFunction,
-	// 		TypeSymbol:   values.Function_Type,
-	// 		TypeVariable: returnType,
-	// 		TypeData:     values.Function_Type,
-	// 		Value:        block,
-	// 		Line:         ctx.GetStart().GetLine(),
-	// 		Column:       ctx.GetStart().GetColumn(),
-	// 	}
+	// get the return type if it exists
+	var returnType string
+	if ctx.ARROW_FUNCTION() != nil {
 
-	// 	//
-	// 	v.getCurrentScope()[idFunction] = symbol
+		returnType = ctx.Type_().GetText()
+		// save the function in the symbol table
+		symbol := Symbol{
+			Id:           idFunction,
+			TypeSymbol:   values.Function_Type,
+			TypeMutable:  returnType,
+			TypeData:     values.Function_Type,
+			ReturnType:   returnType,
+			ReturnTemp:   v.ReturnTemp,
+			ReturnLabel:  v.ReturnLabel,
+			sizeFunction: v.SizeFunction,
+			Line:         ctx.GetStart().GetLine(),
+			Column:       ctx.GetStart().GetColumn(),
+		}
 
-	// 	v.TableSymbol = append(v.TableSymbol, symbol)
+		//
+		v.getCurrentScope()[idFunction] = symbol
 
-	// } else {
-	// 	returnType = "void"
-	// 	// save the function in the symbol table
-	// 	symbol := SymbolTable{
-	// 		Id:           idFunction,
-	// 		TypeSymbol:   values.Type_Function,
-	// 		TypeVariable: returnType,
-	// 		TypeData:     values.Type_Function,
-	// 		Value:        block,
-	// 		Line:         ctx.GetStart().GetLine(),
-	// 		Column:       ctx.GetStart().GetColumn(),
-	// 	}
+		// v.TableSymbol = append(v.TableSymbol, symbol)
 
-	// 	v.getCurrentScope()[idFunction] = symbol
+	} else {
+		returnType = "void"
+		// save the function in the symbol table
+		symbol := Symbol{
+			Id:           idFunction,
+			TypeSymbol:   values.Function_Type,
+			TypeMutable:  returnType,
+			TypeData:     values.Function_Type,
+			ReturnType:   returnType,
+			sizeFunction: v.SizeFunction,
+			ReturnTemp:   v.ReturnTemp,
+			ReturnLabel:  v.ReturnLabel,
+			Line:         ctx.GetStart().GetLine(),
+			Column:       ctx.GetStart().GetColumn(),
+		}
 
-	// 	v.TableSymbol = append(v.TableSymbol, symbol)
-	// }
+		v.getCurrentScope()[idFunction] = symbol
+
+		// v.TableSymbol = append(v.TableSymbol, symbol)
+	}
 
 	// fmt.Println("FunctionWithoutParams: ", idFunction, returnType)
 

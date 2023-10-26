@@ -177,3 +177,85 @@ void main() {
 
 	return;
 }
+
+
+#include <stdio.h>
+#include <math.h>
+float heap[1000000];
+float stack[1000000];
+float SP;
+float HP;
+float t0, t1, t2, t3, t4, t5, t6, t7;
+
+/------NATIVES------/
+void _printNull_(){
+	printf("%c", 110);
+	printf("%c", 117);
+	printf("%c", 108);
+	printf("%c", 108);
+	return;
+}
+
+void _printString_(){
+	L3:
+	t5 = heap[ (int)t4];
+	if(t5 == -1) goto L4;
+	printf("%c", (int)t5);
+	t4 = t4 + 1;
+	goto L3;
+	L4:
+	return;
+}
+
+/------FUNCTIONS------/
+void imprimir() {
+t0 = HP;
+heap[(int)HP] = 104;
+HP = HP + 1;
+heap[(int)HP] = 111;
+HP = HP + 1;
+heap[(int)HP] = 108;
+HP = HP + 1;
+heap[(int)HP] = 97;
+HP = HP + 1;
+heap[(int)HP] = -1;
+HP = HP + 1;
+
+//Variable Declaration
+t1 = SP + 0;
+stack[(int)t1] = t0;
+
+//------------------| Print |------------------ 
+//Expression: Access Variable
+t2 = SP + 0;
+t3 = stack[(int)t2];
+
+if(t3 != 9999999827968) goto L1;
+_printNull_();
+goto L2;
+L1:
+//Print String
+t4 = t3;
+_printString_();
+printf("%c", 32);
+L2:
+printf("%c", 10);
+//------------------| End Print |------------------ 
+
+L0:
+return;
+}
+
+/------MAIN------/
+void main() {
+	SP = 0;
+	HP = 0;
+
+	t6 = SP;
+	t7 = SP + 0;
+	SP = SP + 0;
+	imprimir();
+	SP = SP - 0;
+
+	return;
+}

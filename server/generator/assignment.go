@@ -7,8 +7,19 @@ import (
 
 // Function to generate c3d when a variable is assign
 func (g *Generator) GenAssignment(tempString, id string, pointerStack int, value *values.C3DPrimitive, expr *values.C3DPrimitive) {
+	fmt.Println("fun status assigment: ", g.FunctionCode)
+	if g.FunctionCode {
+		// gen comment
+		g.GenComment("Assigment of variable inside function")
+		// get the temp
+		temp := g.NewTemp()
+		// assign temp
+		g.GenArithmetic(temp, "P", fmt.Sprintf("%d", pointerStack), "+")
+		// get the value
+		g.AccessStack(temp, tempString)
+		return
+	}
 
-	fmt.Println("Value to assign ->", value)
 	if value.GetType() == values.StringType && expr.IsTemp {
 		g.SaveStack(fmt.Sprintf("%d", pointerStack), expr.GetValue())
 

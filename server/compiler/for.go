@@ -23,7 +23,7 @@ func (v *Visitor) VisitForRangeExpr(ctx *parser.ForRangeExprContext) interface{}
 	}
 	// declare the variable c3d
 	// generate temp
-	stack, heap := v.Generator.GenDeclaration(leftValue.GetTemp(), loopVarName, leftValue, v.ExistsLoopContext())
+	stack, heap := v.Generator.GenDeclaration(leftValue.GetTemp(), loopVarName, leftValue, v.ExistsLoopContext(), v.SizeFunction)
 
 	// increment the stack
 	v.Generator.CounterStack("+")

@@ -47,7 +47,12 @@ func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationCont
 	}
 
 	// gen c3d
-	stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue, v.ExistsLoopContext())
+	stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue, v.ExistsLoopContext(), v.SizeFunction)
+
+	// if it's a function declaration increase the size of the pointer
+	if v.Generator.FunctionCode {
+		v.SizeFunction++
+	}
 
 	symbol := Symbol{
 		Id:             varId,
@@ -101,7 +106,12 @@ func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValu
 		// save the value of the variable as nil
 		varValue := values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
 		// generate temp
-		stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue, v.ExistsLoopContext())
+		stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue, v.ExistsLoopContext(), v.SizeFunction)
+
+		// if it's a function declaration increase the size of the pointer
+		if v.Generator.FunctionCode {
+			v.SizeFunction++
+		}
 
 		symbol := Symbol{
 			Id:             varId,
@@ -166,9 +176,13 @@ func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) int
 	// get the type of the value
 	varTypeValue := varValue.GetType()
 
-	fmt.Println("value -->>", v.Generator.FunctionCode)
 	// if its int, float or boolean
-	stack, heap := v.Generator.GenDeclaration(varValue.Value, varId, varValue, v.ExistsLoopContext())
+	stack, heap := v.Generator.GenDeclaration(varValue.Value, varId, varValue, v.ExistsLoopContext(), v.SizeFunction)
+
+	// if it's a function declaration increase the size of the pointer
+	if v.Generator.FunctionCode {
+		v.SizeFunction++
+	}
 
 	symbol := Symbol{
 		Id:             varId,

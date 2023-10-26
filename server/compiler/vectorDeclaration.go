@@ -68,8 +68,11 @@ func (v *Visitor) VisitVectorDeclaration(ctx *parser.VectorDeclarationContext) i
 		v.Generator.GetStack(tempPointer, fmt.Sprintf("%d", symbolTable.StackDirection))
 
 		// declare
-		stack, heap := v.Generator.GenDeclarationVector(tempPointer, varId, false)
-
+		stack, heap := v.Generator.GenDeclarationVector(tempPointer, varId, false, v.SizeFunction)
+		// if it's a function declaration increase the size of the pointer
+		if v.Generator.FunctionCode {
+			v.SizeFunction++
+		}
 		newSymbol := Symbol{
 			Id:             varId,
 			TypeSymbol:     values.Vector_Type,
@@ -178,7 +181,11 @@ func (v *Visitor) VisitVectorDeclaration(ctx *parser.VectorDeclarationContext) i
 	}
 
 	// declare
-	stack, heap := v.Generator.GenDeclarationVector(tempPointer, varId, false)
+	stack, heap := v.Generator.GenDeclarationVector(tempPointer, varId, false, v.SizeFunction)
+	// if it's a function declaration increase the size of the pointer
+	if v.Generator.FunctionCode {
+		v.SizeFunction++
+	}
 
 	symbol := Symbol{
 		Id:             varId,

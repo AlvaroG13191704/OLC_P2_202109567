@@ -196,7 +196,7 @@ func (v *Visitor) VisitAppendVector(ctx *parser.AppendVectorContext) interface{}
 	}
 
 	// declare
-	stack, heap := v.Generator.GenDeclarationVector(newTempPointer, symbolValue.Id, false)
+	stack, heap := v.Generator.GenDeclarationVector(newTempPointer, symbolValue.Id, false, v.SizeFunction)
 
 	// update the symbol table
 	symbolValue.Value = newTempPointer
@@ -482,7 +482,7 @@ func (v *Visitor) VisitRemoveAtVector(ctx *parser.RemoveAtVectorContext) interfa
 	}
 
 	// declare
-	stack, heap := v.Generator.GenDeclarationVector(newTempPointer, symbolValue.Id, false)
+	stack, heap := v.Generator.GenDeclarationVector(newTempPointer, symbolValue.Id, false, v.SizeFunction)
 
 	// update the symbol table
 	symbolValue.Value = newTempPointer

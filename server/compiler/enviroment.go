@@ -15,10 +15,11 @@ type Symbol struct {
 	Line        int
 	Column      int
 	// Function attributes
-	ListParams  interface{}
-	ReturnType  string
-	ReturnTemp  string
-	ReturnLabel string
+	sizeFunction int
+	ListParams   []Symbol
+	ReturnType   string
+	ReturnTemp   string
+	ReturnLabel  string
 
 	// variables attributes
 	Id             string // the name of the variable
@@ -52,7 +53,11 @@ type Visitor struct {
 	loopContexts []LoopContext
 	Errors       []Error
 	// function
-	FirstPass bool
+	FunctionContext []string
+	FirstPass       bool
+	SizeFunction    int
+	ReturnLabel     string
+	ReturnTemp      string
 }
 
 // Manage the scopes
@@ -187,4 +192,21 @@ func (v *Visitor) GetFunction(varName string) (Symbol, bool) {
 		}
 	}
 	return Symbol{}, false
+}
+
+// ExistsFunctionContext check if a function context exists
+func (v *Visitor) ExistsFunctionContext() bool {
+	return len(v.FunctionContext) > 0
+}
+
+// PushFunctionContext push a function context
+func (v *Visitor) PushFunctionContext(functionContext string) {
+	v.FunctionContext = append(v.FunctionContext, functionContext)
+}
+
+// PopFunctionContext pop a function context
+func (v *Visitor) PopFunctionContext() {
+	if len(v.FunctionContext) > 0 {
+		v.FunctionContext = v.FunctionContext[:len(v.FunctionContext)-1]
+	}
 }
