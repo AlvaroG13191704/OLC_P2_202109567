@@ -27,6 +27,18 @@ func (v *Visitor) VisitReturnStmt(ctx *parser.ReturnStmtContext) interface{} {
 		// evaluate the expression
 		expr := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
 
+		if !expr.GetIsTemp() && expr.GetType() == values.StringType {
+			// add comment
+			v.Generator.GenComment("Return statement")
+			// gen string
+			tempString := v.Generator.GenString(expr.GetValue())
+			// assign to the return type
+			v.Generator.AssignTemp(v.ReturnTemp, tempString)
+			// add goto
+			v.Generator.GoTo(v.ReturnLabel)
+			return nil
+		}
+
 		// gen comment
 		v.Generator.GenComment("Return statement")
 
