@@ -16,7 +16,7 @@ type Symbol struct {
 	Column      int
 	// Function attributes
 	sizeFunction int
-	ListParams   []Symbol
+	ListParams   map[string][]Symbol
 	ReturnType   string
 	ReturnTemp   string
 	ReturnLabel  string
@@ -54,6 +54,7 @@ type Visitor struct {
 	Errors       []Error
 	// function
 	FunctionContext []string
+	ScopeParams     []map[string]Symbol
 	FirstPass       bool
 	SizeFunction    int
 	ReturnLabel     string
@@ -71,6 +72,7 @@ func (v *Visitor) popScope() {
 	}
 }
 
+// getCurrentScope get the current scope
 func (v *Visitor) getCurrentScope() map[string]Symbol {
 	return v.SymbolStack[len(v.SymbolStack)-1]
 }
@@ -98,6 +100,12 @@ func (v *Visitor) VerifyVariable(varName string) bool {
 		}
 	}
 	return false
+}
+
+// delete from gloabl scope
+func (v *Visitor) DeleteVariableGlobalScope(varName string) {
+	scope := v.SymbolStack[0]
+	delete(scope, varName)
 }
 
 // VerifyScope verify if the variable is in the scope

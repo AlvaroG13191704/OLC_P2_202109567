@@ -13,6 +13,7 @@ func (v *Visitor) VisitIdExpr(ctx *parser.IdExprContext) interface{} {
 
 	// verify if the id is in the scope or others
 	variable, ok := v.VerifyScope(id)
+
 	if ok {
 		value := variable.(Symbol)
 

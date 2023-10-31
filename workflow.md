@@ -22,7 +22,7 @@
 - [x] Basicas - 16 pts / 16pts
 - [x] Intermedias - 9 pts / 10 pts - error en el switch
 - [x] Vectores - 10 pts / 12 pts - error en el remoteat
-- [ ] Embebidas - 3 pts / 14 pts - terminar funciones
+- [ ] Embebidas - 10 pts / 14 pts - terminar funciones
 - [ ] Recursivas
 - [x] Struct - gramatica 2 pts / 12 pts
 - [ ] Matrices
