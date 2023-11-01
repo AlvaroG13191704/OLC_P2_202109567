@@ -51,21 +51,10 @@ func (v *Visitor) VisitAccessVector(ctx *parser.AccessVectorContext) interface{}
 	}
 
 	if !index.GetIsTemp() {
+		// TODO: Add dynamic validation
 		// conver to int
 		indexInt, _ = strconv.ParseInt(index.GetValue(), 10, 64)
 
-		// evaluate if the index is out of bounds
-		if indexInt < 0 || indexInt >= int64(symbolValue.LenghtVector) {
-			log.Printf("Error: Index '%d' is out of bounds \n", indexInt)
-			// add error
-			v.Errors = append(v.Errors, Error{
-				Line:   ctx.GetStart().GetLine(),
-				Column: ctx.GetStart().GetColumn(),
-				Msg:    fmt.Sprintf("Error: Index '%d' is out of bounds", indexInt),
-				Type:   "Semantic",
-			})
-			return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
-		}
 	}
 
 	// primitive
@@ -77,6 +66,34 @@ func (v *Visitor) VisitAccessVector(ctx *parser.AccessVectorContext) interface{}
 	// increment the iterator
 	v.Generator.GenArithmetic(tempLenght, tempIterator, "1", "+")
 
+	// gen labels
+	labelError := v.Generator.NewLabel()
+	labelCotinue := v.Generator.NewLabel()
+	labelEnd := v.Generator.NewLabel()
+	// add dynamic validation
+	if !index.GetIsTemp() {
+		// evaluate if the index is out of bounds
+		tempIndex := v.Generator.NewTemp()
+		v.Generator.AssignTemp(tempIndex, fmt.Sprintf("%d", indexInt))
+		v.Generator.AddIf(tempIndex, tempLenght, ">", labelError)
+		v.Generator.AddIf(tempIndex, "0", "<", labelError)
+	} else {
+		v.Generator.AddIf(index.GetValue(), tempLenght, ">", labelError)
+		v.Generator.AddIf(index.GetValue(), "0", "<", labelError)
+	}
+	// add goto
+	v.Generator.GoTo(labelCotinue)
+	// add label error
+	v.Generator.AddLabel(labelError)
+	// add error print
+	for _, i := range "Out of bounds" {
+		v.Generator.GenPrint("c", fmt.Sprintf("%d", int(i)))
+	}
+	// add goto
+	v.Generator.GoTo(labelEnd)
+
+	// add label continue
+	v.Generator.AddLabel(labelCotinue)
 	// sum the index to the iterator
 	if index.GetIsTemp() {
 		v.Generator.GenArithmetic(index.GetValue(), index.GetValue(), "1", "+")
@@ -86,6 +103,9 @@ func (v *Visitor) VisitAccessVector(ctx *parser.AccessVectorContext) interface{}
 	}
 	// get the value from the heap
 	v.Generator.GetHeap(tempValue, tempIterator)
+
+	// add label end
+	v.Generator.AddLabel(labelEnd)
 
 	return values.NewC3DPrimitive(tempValue, tempIterator, symbolValue.TypeData, true)
 }
@@ -401,24 +421,12 @@ func (v *Visitor) VisitRemoveAtVector(ctx *parser.RemoveAtVectorContext) interfa
 	// get the index
 	index := v.Visit(ctx.Expr()).(*values.C3DPrimitive)
 
-	var numINdex int64
+	var indexInt int64
 
 	if !index.GetIsTemp() {
+		// TODO: add dynamic validation
 		// convert the index from int64 to int
-		numINdex, _ := strconv.ParseInt(index.GetValue(), 10, 64)
-
-		// evaluate if the index is out of bounds
-		if numINdex < 0 || numINdex >= int64(symbolValue.LenghtVector) {
-			log.Printf("Error: Index '%d' is out of bounds \n", numINdex)
-			// add error
-			v.Errors = append(v.Errors, Error{
-				Line:   ctx.GetStart().GetLine(),
-				Column: ctx.GetStart().GetColumn(),
-				Msg:    fmt.Sprintf("Error: Index '%d' is out of bounds", numINdex),
-				Type:   "Semantic",
-			})
-			return values.NewC3DPrimitive("9999999827968.00", "nil", values.NilType, false)
-		}
+		indexInt, _ = strconv.ParseInt(index.GetValue(), 10, 64)
 	}
 
 	// evaluate if the index is a number
@@ -440,7 +448,34 @@ func (v *Visitor) VisitRemoveAtVector(ctx *parser.RemoveAtVectorContext) interfa
 	tempPointerStack := v.Generator.NewTemp()
 	tempPointerHeap := v.Generator.NewTemp()
 	newTempPointer := v.Generator.NewTemp()
+	// gen labels
+	labelError := v.Generator.NewLabel()
+	labelCotinue := v.Generator.NewLabel()
+	labelEnd := v.Generator.NewLabel()
+	// add dynamic validation
+	if !index.GetIsTemp() {
+		// evaluate if the index is out of bounds
+		tempIndex := v.Generator.NewTemp()
+		v.Generator.AssignTemp(tempIndex, fmt.Sprintf("%d", indexInt))
+		v.Generator.AddIf(tempIndex, tempLenght, ">", labelError)
+		v.Generator.AddIf(tempIndex, "0", "<", labelError)
+	} else {
+		v.Generator.AddIf(index.GetValue(), tempLenght, ">", labelError)
+		v.Generator.AddIf(index.GetValue(), "0", "<", labelError)
+	}
+	// add goto
+	v.Generator.GoTo(labelCotinue)
+	// add label error
+	v.Generator.AddLabel(labelError)
+	// add error print
+	for _, i := range "Out of bounds" {
+		v.Generator.GenPrint("c", fmt.Sprintf("%d", int(i)))
+	}
+	// add goto
+	v.Generator.GoTo(labelEnd)
 
+	// add label continue
+	v.Generator.AddLabel(labelCotinue)
 	// get the value from the stack
 	v.Generator.GetStack(tempPointerStack, fmt.Sprintf("%d", symbolValue.StackDirection))
 
@@ -466,7 +501,7 @@ func (v *Visitor) VisitRemoveAtVector(ctx *parser.RemoveAtVectorContext) interfa
 	iteratorTemp := v.Generator.NewTemp()
 	v.Generator.GenComment("Start saving new vector values")
 	for i := 0; i < symbolValue.LenghtVector; i++ {
-		if i == int(numINdex) {
+		if i == int(indexInt) {
 			// increment the iterator
 			v.Generator.GenArithmetic(tempPointerHeap, tempPointerHeap, "1", "+")
 			continue
@@ -497,6 +532,8 @@ func (v *Visitor) VisitRemoveAtVector(ctx *parser.RemoveAtVectorContext) interfa
 	v.UpdateVariable(vectorName, symbolValue)
 	// decrease the heap
 	// v.Generator.DecPointerHeap()
+	// add label end
+	v.Generator.AddLabel(labelEnd)
 	// increment the stack
 	v.Generator.CounterStack("+")
 	return nil

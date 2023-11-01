@@ -30,3 +30,8 @@
 - [ ] Comprobación dinamica - 2 / 5 pts
   
   TOTAL = 59 / 100 PTS
+
+
+
+
+
