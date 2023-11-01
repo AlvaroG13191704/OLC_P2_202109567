@@ -11,7 +11,7 @@ func (v *Visitor) VisitReturnStmt(ctx *parser.ReturnStmtContext) interface{} {
 	// evaluate if the expression is not null
 	fmt.Println("RETURN STMT")
 	// if there is return value ++ the size
-	v.SizeFunction = v.SizeFunction + 1
+	// v.SizeFunction = v.SizeFunction + 1
 	// evaluate if the return is inside a function
 	if !v.ExistsFunctionContext() {
 		v.Errors = append(v.Errors, Error{

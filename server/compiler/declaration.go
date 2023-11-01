@@ -9,6 +9,10 @@ import (
 
 // Visit type declaration with value or not
 func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationContext) interface{} {
+	// if it's a function declaration increase the size of the pointer
+	if v.Generator.FunctionCode {
+		v.SizeFunction++
+	}
 	// get the id of the variable
 	varId := ctx.ID_PRIMITIVE().GetText()
 	// verify if the variable is in the scope
@@ -49,9 +53,9 @@ func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationCont
 	// gen c3d
 	stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue, v.ExistsLoopContext(), v.SizeFunction)
 
-	// if it's a function declaration increase the size of the pointer
-	if v.Generator.FunctionCode {
-		v.SizeFunction++
+	if !v.Generator.FunctionCode {
+		// increment the stack
+		v.Generator.CounterStack("+")
 	}
 
 	symbol := Symbol{
@@ -65,14 +69,12 @@ func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationCont
 		StackDirection: stack,
 		HeapDirection:  heap,
 	}
-	// increment the stack
-	v.Generator.CounterStack("+")
 
 	// add the variable to the scope
 	v.getCurrentScope()[varId] = symbol
 
 	// apppend to the TableSymbol
-	// v.TableSymbol = append(v.TableSymbol, symbol)
+	v.TableSymbol = append(v.TableSymbol, symbol)
 	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
 
 	return nil
@@ -80,6 +82,10 @@ func (v *Visitor) VisitTypeValueDeclaration(ctx *parser.TypeValueDeclarationCont
 
 // Visit type declaration with value or not
 func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValueDeclarationContext) interface{} {
+	// if it's a function declaration increase the size of the pointer
+	if v.Generator.FunctionCode {
+		v.SizeFunction++
+	}
 	// get the id of the variable
 	varId := ctx.ID_PRIMITIVE().GetText()
 	// verify if the variable is in the scope
@@ -109,8 +115,9 @@ func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValu
 		stack, heap := v.Generator.GenDeclaration(varValue.GetType(), varId, varValue, v.ExistsLoopContext(), v.SizeFunction)
 
 		// if it's a function declaration increase the size of the pointer
-		if v.Generator.FunctionCode {
-			v.SizeFunction++
+		if !v.Generator.FunctionCode {
+			// increment the stack
+			v.Generator.CounterStack("+")
 		}
 
 		symbol := Symbol{
@@ -124,9 +131,6 @@ func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValu
 			StackDirection: stack,
 			HeapDirection:  heap,
 		}
-
-		// increment the stack
-		v.Generator.CounterStack("+")
 
 		// add the variable to the scope
 		v.getCurrentScope()[varId] = symbol
@@ -155,6 +159,10 @@ func (v *Visitor) VisitTypeOptionalValueDeclaration(ctx *parser.TypeOptionalValu
 // Visit type declaration without type value (infer)
 
 func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) interface{} {
+	// if it's a function declaration increase the size of the pointer
+	if v.Generator.FunctionCode {
+		v.SizeFunction++
+	}
 	// get the id of the variable
 	varId := ctx.ID_PRIMITIVE().GetText()
 	// verify if the variable is in the scope
@@ -180,8 +188,9 @@ func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) int
 	stack, heap := v.Generator.GenDeclaration(varValue.Value, varId, varValue, v.ExistsLoopContext(), v.SizeFunction)
 
 	// if it's a function declaration increase the size of the pointer
-	if v.Generator.FunctionCode {
-		v.SizeFunction++
+	if !v.Generator.FunctionCode {
+		// increment the stack
+		v.Generator.CounterStack("+")
 	}
 
 	symbol := Symbol{
@@ -196,14 +205,11 @@ func (v *Visitor) VisitValueDeclaration(ctx *parser.ValueDeclarationContext) int
 		HeapDirection:  heap,
 	}
 
-	// increment the stack
-	v.Generator.CounterStack("+")
-
 	// add the variable to the scope
 	v.getCurrentScope()[varId] = symbol
 
 	// apppend to the TableSymbol
-	// v.TableSymbol = append(v.TableSymbol, symbol)
+	v.TableSymbol = append(v.TableSymbol, symbol)
 
 	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
 

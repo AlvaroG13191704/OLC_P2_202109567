@@ -496,7 +496,7 @@ func (v *Visitor) VisitRemoveAtVector(ctx *parser.RemoveAtVectorContext) interfa
 	// update the symbol table
 	v.UpdateVariable(vectorName, symbolValue)
 	// decrease the heap
-	v.Generator.DecPointerHeap()
+	// v.Generator.DecPointerHeap()
 	// increment the stack
 	v.Generator.CounterStack("+")
 	return nil

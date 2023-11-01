@@ -20,11 +20,13 @@
 
 #### Calificaction Files
 - [x] Basicas - 16 pts / 16pts
-- [x] Intermedias - 9 pts / 10 pts - error en el switch
-- [x] Vectores - 10 pts / 12 pts - error en el remoteat
-- [ ] Embebidas - 10 pts / 14 pts - terminar funciones
+- [x] Intermedias - 10 pts / 10 pts 
+- [x] Vectores - 10 pts / 12 pts 
+- [ ] Embebidas - 12 pts / 14 pts - terminar funciones
 - [ ] Recursivas
 - [x] Struct - gramatica 2 pts / 12 pts
 - [ ] Matrices
-- [ ] Reportes - 9 pts / 9pts 
+- [ ] Reportes - 7 pts / 9pts 
+- [ ] Comprobación dinamica - 2 / 5 pts
   
+  TOTAL = 59 / 100 PTS

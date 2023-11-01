@@ -44,28 +44,6 @@ func (v *Visitor) VisitLogicalOperationExpr(ctx *parser.LogicalOperationExprCont
 			// return the value
 			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
-			// if !v.Generator.GeneratorNativeVariables.LogicalNative.IsAndFunc {
-			// 	v.Generator.GenAndFunc()
-			// 	v.Generator.GeneratorNativeVariables.LogicalNative.IsAndFunc = true
-			// 	temp := v.Generator.GenLogical(
-			// 		leftValue.GetValue(),
-			// 		rightValue.GetValue(),
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp1And,
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp2And,
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.TempAndPointer, "and")
-			// 	// return the value
-			// 	return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			// } else {
-			// 	temp := v.Generator.GenLogical(
-			// 		leftValue.GetValue(),
-			// 		rightValue.GetValue(),
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp1And,
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp2And,
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.TempAndPointer, "and")
-			// 	// return the value
-			// 	return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			// }
-
 		} else {
 
 			// error
@@ -97,27 +75,6 @@ func (v *Visitor) VisitLogicalOperationExpr(ctx *parser.LogicalOperationExprCont
 			// return the value
 			return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
 
-			// if !v.Generator.GeneratorNativeVariables.LogicalNative.IsOrFunc {
-			// 	v.Generator.GenOrFunc()
-			// 	v.Generator.GeneratorNativeVariables.LogicalNative.IsOrFunc = true
-			// 	temp := v.Generator.GenLogical(
-			// 		leftValue.GetValue(),
-			// 		rightValue.GetValue(),
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp1Or,
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp2Or,
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.TempOrPointer, "or")
-			// 	// return the value
-			// 	return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			// } else {
-			// 	temp := v.Generator.GenLogical(
-			// 		leftValue.GetValue(),
-			// 		rightValue.GetValue(),
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp1Or,
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.Temp2Or,
-			// 		v.Generator.GeneratorNativeVariables.LogicalNative.TempOrPointer, "or")
-			// 	// return the value
-			// 	return values.NewC3DPrimitive(temp, temp, values.BooleanType, true)
-			// }
 		} else {
 
 			// error

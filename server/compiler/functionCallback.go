@@ -138,14 +138,17 @@ func (v *Visitor) VisitCallFunctionWithParams(ctx *parser.CallFunctionWithParams
 			// create the the temp
 			temp := v.Generator.NewTemp()
 			// get the position of the param
-			v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection), "+")
+			if listArguments.(map[string][]Symbol)["external"][i].Reference {
+				v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection+len(listArguments.(map[string][]Symbol)["external"])), "+")
+			} else {
+				v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection), "+")
+			}
 			// save in the stack
 			v.Generator.SaveStack(temp, value.GetValue())
 
 		}
 
-	}
-	if listParams["internal"] != nil && listArguments.(map[string][]Symbol)["internal"] != nil {
+	} else if listParams["internal"] != nil && listArguments.(map[string][]Symbol)["internal"] != nil {
 		fmt.Println("params with only internal, not external --> _ value")
 		fmt.Println("listParams ->", listParams)
 		fmt.Println("listArguments ->", listArguments)
@@ -183,14 +186,16 @@ func (v *Visitor) VisitCallFunctionWithParams(ctx *parser.CallFunctionWithParams
 			// create the the temp
 			temp := v.Generator.NewTemp()
 			// get the position of the param
-			v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection), "+")
+			if listArguments.(map[string][]Symbol)["internal"][i].Reference {
+				v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection+len(listArguments.(map[string][]Symbol)["internal"])), "+")
+			} else {
+				v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection), "+")
+			}
 			// save in the stack
 			v.Generator.SaveStack(temp, value.GetValue())
 		}
 
-	}
-
-	if listParams["internal"] != nil && listArguments.(map[string][]Symbol)["external"] != nil {
+	} else if listParams["internal"] != nil && listArguments.(map[string][]Symbol)["external"] != nil {
 		fmt.Println("params with both internal and external, same name")
 		fmt.Println("listParams ->", listParams)
 		fmt.Println("listArguments ->", listArguments)
@@ -228,7 +233,11 @@ func (v *Visitor) VisitCallFunctionWithParams(ctx *parser.CallFunctionWithParams
 			// create the the temp
 			temp := v.Generator.NewTemp()
 			// get the position of the param
-			v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection), "+")
+			if listArguments.(map[string][]Symbol)["external"][i].Reference {
+				v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection+len(listArguments.(map[string][]Symbol)["external"])), "+")
+			} else {
+				v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", param.StackDirection), "+")
+			}
 			// save in the stack
 			v.Generator.SaveStack(temp, value.GetValue())
 
@@ -270,7 +279,14 @@ func (v *Visitor) VisitListCallFunctionStmtEI(ctx *parser.ListCallFunctionStmtEI
 	listIds := ctx.AllID_PRIMITIVE()
 	listExpr := ctx.AllExpr()
 
+	var reference bool
+
 	for i, id := range listIds {
+		if ctx.REFERENCE(i) != nil {
+			reference = true
+		} else {
+			reference = false
+		}
 		value := v.Visit(listExpr[i])
 
 		// get the id
@@ -284,10 +300,13 @@ func (v *Visitor) VisitListCallFunctionStmtEI(ctx *parser.ListCallFunctionStmtEI
 			TypeMutable: values.LetMutable,
 			TypeData:    primitiveValue.GetType(),
 			Value:       primitiveValue,
+			Reference:   reference,
 			ListParams:  nil,
 			Line:        ctx.GetStart().GetLine(),
 			Column:      ctx.GetStart().GetColumn(),
 		}
+
+		fmt.Println("Reference ->", reference)
 
 		// append the symbol table to the params
 		params["external"] = append(params["external"], symbolTable)
@@ -306,9 +325,14 @@ func (v *Visitor) VisitListCallFunctionStmtNEI(ctx *parser.ListCallFunctionStmtN
 	params["internal"] = []Symbol{}
 
 	listExpr := ctx.AllExpr()
-
+	var reference bool
 	// iterate over the list of ids and save the values
-	for _, expr := range listExpr {
+	for i, expr := range listExpr {
+		if ctx.REFERENCE(i) != nil {
+			reference = true
+		} else {
+			reference = false
+		}
 		// get the value of the expression
 		value := v.Visit(expr)
 
@@ -321,13 +345,14 @@ func (v *Visitor) VisitListCallFunctionStmtNEI(ctx *parser.ListCallFunctionStmtN
 			TypeMutable: values.LetMutable,
 			TypeData:    primitiveValue.GetType(),
 			Value:       primitiveValue,
+			Reference:   reference,
 			ListParams:  nil,
 			Line:        ctx.GetStart().GetLine(),
 			Column:      ctx.GetStart().GetColumn(),
 		}
 		// append the symbol table to the params
 		params["internal"] = append(params["internal"], symbolTable)
-
+		fmt.Println("Reference ->", reference)
 	}
 
 	return params

@@ -47,8 +47,12 @@ func (v *Visitor) VisitFunctionWithoutParams(ctx *parser.FunctionWithoutParamsCo
 	// set false
 	v.Generator.FunctionCode = false
 
-	// add space to the stack
-	v.Generator.StackCounter = v.SizeFunction - v.Generator.StackCounter - 1
+	// rest
+	if ctx.ARROW_FUNCTION() != nil {
+		v.Generator.StackCounter = v.SizeFunction
+	} else {
+		v.Generator.StackCounter = v.SizeFunction - 2
+	}
 	// gen c3d
 	v.Generator.FuncionUser = append(v.Generator.FuncionUser, "return;\n")
 	// close function
@@ -76,7 +80,7 @@ func (v *Visitor) VisitFunctionWithoutParams(ctx *parser.FunctionWithoutParamsCo
 		//
 		v.getCurrentScope()[idFunction] = symbol
 
-		// v.TableSymbol = append(v.TableSymbol, symbol)
+		v.TableSymbol = append(v.TableSymbol, symbol)
 
 	} else {
 		returnType = "void"
@@ -96,7 +100,7 @@ func (v *Visitor) VisitFunctionWithoutParams(ctx *parser.FunctionWithoutParamsCo
 
 		v.getCurrentScope()[idFunction] = symbol
 
-		// v.TableSymbol = append(v.TableSymbol, symbol)
+		v.TableSymbol = append(v.TableSymbol, symbol)
 	}
 
 	// fmt.Println("FunctionWithoutParams: ", idFunction, returnType)
@@ -151,8 +155,15 @@ func (v *Visitor) VisitFunctionWithParams(ctx *parser.FunctionWithParamsContext)
 		v.Generator.AddLabel(v.ReturnLabel)
 	}
 
-	// add space to the stack
-	v.Generator.StackCounter = v.SizeFunction - v.Generator.StackCounter - 1
+	fmt.Println("SizeFunction: ", v.SizeFunction)
+	fmt.Println("StackCounter: ", v.Generator.StackCounter)
+
+	// rest
+	if ctx.ARROW_FUNCTION() != nil {
+		v.Generator.StackCounter = v.SizeFunction
+	} else {
+		v.Generator.StackCounter = v.SizeFunction - len(params["internal"])
+	}
 
 	// set false
 	v.Generator.FunctionCode = false
@@ -184,7 +195,7 @@ func (v *Visitor) VisitFunctionWithParams(ctx *parser.FunctionWithParamsContext)
 		//
 		v.getCurrentScope()[idFunction] = symbol
 
-		// v.TableSymbol = append(v.TableSymbol, symbol)
+		v.TableSymbol = append(v.TableSymbol, symbol)
 
 	} else {
 		returnType = "void"
@@ -205,7 +216,7 @@ func (v *Visitor) VisitFunctionWithParams(ctx *parser.FunctionWithParamsContext)
 
 		v.getCurrentScope()[idFunction] = symbol
 
-		// v.TableSymbol = append(v.TableSymbol, symbol)
+		v.TableSymbol = append(v.TableSymbol, symbol)
 	}
 
 	// fmt.Println("FunctionWithoutParams: ", idFunction, returnType)
@@ -227,6 +238,14 @@ func (v *Visitor) VisitListFunctionParamsEI(ctx *parser.ListFunctionParamsEICont
 
 	listTypes := ctx.AllType_()
 
+	var mutable string
+
+	if ctx.INOUT() != nil {
+		mutable = values.VarMutable
+	} else {
+		mutable = values.LetMutable
+	}
+
 	// iterate over the list of ids
 	for i, id := range listIds {
 		// get the type
@@ -237,7 +256,7 @@ func (v *Visitor) VisitListFunctionParamsEI(ctx *parser.ListFunctionParamsEICont
 		symbol := Symbol{
 			Id:             id.GetText(),
 			TypeSymbol:     values.Variable_Type,
-			TypeMutable:    values.LetMutable,
+			TypeMutable:    mutable,
 			TypeData:       typeParam,
 			StackDirection: v.SizeFunction,
 			Value:          values.NewC3DPrimitive("9999999827968.00", "nil", typeParam, false),
@@ -273,6 +292,13 @@ func (v *Visitor) VisitListFunctionParamsNEI(ctx *parser.ListFunctionParamsNEICo
 
 	listIds := ctx.AllID_PRIMITIVE()
 	listTypes := ctx.AllType_()
+	var mutable string
+
+	if ctx.INOUT() != nil {
+		mutable = values.VarMutable
+	} else {
+		mutable = values.LetMutable
+	}
 
 	// iterate over the list of ids
 	for i, id := range listIds {
@@ -283,7 +309,7 @@ func (v *Visitor) VisitListFunctionParamsNEI(ctx *parser.ListFunctionParamsNEICo
 		symbol := Symbol{
 			Id:             id.GetText(),
 			TypeSymbol:     values.Variable_Type,
-			TypeMutable:    values.LetMutable,
+			TypeMutable:    mutable,
 			TypeData:       typeParam,
 			StackDirection: v.SizeFunction,
 			Value:          values.NewC3DPrimitive("9999999827968.00", "nil", typeParam, false),

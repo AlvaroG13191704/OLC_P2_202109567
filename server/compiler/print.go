@@ -66,16 +66,13 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 				temp := v.Generator.GenString(primitive.GetValue())
 				v.Generator.GenPrintString(temp)
 			}
-			v.Generator.GenPrint("c", "10")
-			v.Generator.AddNewLine()
+			// v.Generator.GenPrint("c", "10")
+			// v.Generator.AddNewLine()
 
 		} else if primitive.GetType() == values.CharType {
 			// generate c3d
 			char := primitive.GetValue()
 			v.Generator.GenPrint("c", fmt.Sprintf("%v", int(char[0])))
-
-			v.Generator.GenPrint("c", "10")
-			v.Generator.AddNewLine()
 
 		} else if primitive.GetType() == values.BooleanType {
 			if !v.Generator.GeneratorNativeVariables.PrintBoolNative.IsBoolFunc {
@@ -106,6 +103,8 @@ func (v *Visitor) VisitPrintstmt(ctx *parser.PrintstmtContext) interface{} {
 		// v.Generator.GenPrint("c", "10")
 
 	}
+	v.Generator.GenPrint("c", "10")
+	// v.Generator.AddNewLine()
 
 	return nil
 

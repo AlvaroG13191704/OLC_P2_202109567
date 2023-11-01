@@ -20,6 +20,7 @@ type Symbol struct {
 	ReturnType   string
 	ReturnTemp   string
 	ReturnLabel  string
+	Reference    bool
 
 	// variables attributes
 	Id             string // the name of the variable
@@ -47,6 +48,7 @@ type Error struct {
 
 type Visitor struct {
 	parser.BaseGrammarVisitor
+	TableSymbol []Symbol
 	Generator   *generator.Generator
 	SymbolStack []map[string]Symbol
 	// manage loop context

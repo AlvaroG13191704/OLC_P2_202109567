@@ -207,7 +207,7 @@ func (v *Visitor) VisitVectorDeclaration(ctx *parser.VectorDeclarationContext) i
 	v.getCurrentScope()[varId] = symbol
 
 	// // apppend to the TableSymbol
-	// v.TableSymbol = append(v.TableSymbol, symbol)
+	v.TableSymbol = append(v.TableSymbol, symbol)
 
 	fmt.Println("Global scope or symbol table ->", v.SymbolStack)
 	return nil

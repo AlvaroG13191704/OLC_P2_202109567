@@ -13,8 +13,8 @@
     // @ts-ignore
     $dataContext.outputCompile = $page.form.result
 
-    // $dataContext.TableSymbols = $page.form.symbol
-    // $dataContext.TableErrors = $page.form.errors == null ? [] : $page.form.errors
+    $dataContext.TableSymbols = $page.form.symbol
+    $dataContext.TableErrors = $page.form.errors == null ? [] : $page.form.errors
     // $dataContext.cstTree = $page.form.dot
   }
 

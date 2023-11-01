@@ -11,7 +11,8 @@ import (
 
 func NewVisitor() *Visitor {
 	return &Visitor{
-		Generator: generator.NewGenerator(),
+		Generator:   generator.NewGenerator(),
+		TableSymbol: []Symbol{},
 	}
 
 }
@@ -48,11 +49,7 @@ func (v *Visitor) VisitBlock(ctx *parser.BlockContext) interface{} {
 			}
 		}
 		v.FirstPass = true
-		// print the symbol table
-		fmt.Println("----------------------------------------------------")
-		fmt.Println("Current scope or symbol table ->", v.getCurrentScope())
-		fmt.Println("Global scope or symbol table ->", v.SymbolStack)
-		fmt.Println("----------------------------------------------------")
+
 	}
 
 	for _, stmt := range ctx.AllStmts() {

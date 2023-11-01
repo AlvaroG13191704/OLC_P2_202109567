@@ -22,10 +22,18 @@ func (v *Visitor) VisitIdExpr(ctx *parser.IdExprContext) interface{} {
 		}
 		temp := v.Generator.NewTemp()
 		if v.Generator.FunctionCode {
+
+			tempValue := v.Generator.NewTemp()
+			tempPointer := v.Generator.NewTemp()
 			// gen comment
 			v.Generator.GenComment("Access to variable inside function")
 			// assign
-			v.Generator.GenArithmetic(temp, "P", fmt.Sprintf("%d", value.StackDirection), "+")
+			v.Generator.GenArithmetic(tempPointer, "P", fmt.Sprintf("%d", value.StackDirection), "+")
+
+			// get the value
+			v.Generator.AccessStack(tempValue, tempPointer)
+
+			return values.NewC3DPrimitive(tempValue, tempPointer, value.TypeData, true)
 		}
 		v.Generator.AccessStack(temp, fmt.Sprintf("%d", value.StackDirection))
 		// change temp

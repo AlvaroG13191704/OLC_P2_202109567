@@ -13,7 +13,7 @@ func AnalyzeAndParseCode() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 
 		// // Errors
-		// var TotalErrors []interpreter.Error
+		var TotalErrors []compiler.Error
 
 		// get the code from the request body
 		code := string(c.Body())
@@ -27,10 +27,10 @@ func AnalyzeAndParseCode() fiber.Handler {
 		p := parser.NewGrammarParser(tokens)                                   // create parser
 
 		// new list of errors
-		// sintacticErrors := &interpreter.NewCustomErrorListener{}
+		sintacticErrors := &compiler.NewCustomErrorListener{}
 		// add the errors to the parser
-		// p.RemoveErrorListeners()
-		// p.AddErrorListener(sintacticErrors)
+		p.RemoveErrorListeners()
+		p.AddErrorListener(sintacticErrors)
 
 		p.BuildParseTrees = true // tell the parser to build parse trees
 		tree := p.Start_()       // parse the input
@@ -39,40 +39,26 @@ func AnalyzeAndParseCode() fiber.Handler {
 		visitor := compiler.NewVisitor()
 		visitor.Visit(tree) // visit the tree
 
-		// // get the output
-		// output := visitor.Outputs
+		// append the errors
+		TotalErrors = append(TotalErrors, sintacticErrors.Errors...)
 
-		// // join the output array and separate by new line
-		// out := ""
-		// for _, v := range output {
-		// 	out += v + "\n"
-		// }
+		// append the errors
+		TotalErrors = append(TotalErrors, visitor.Errors...)
 
-		// // append the errors
-		// TotalErrors = append(TotalErrors, sintacticErrors.Errors...)
+		fmt.Println("errors: ", TotalErrors)
 
-		// // append the errors
-		// TotalErrors = append(TotalErrors, visitor.Errors...)
-
-		// fmt.Println("errors: ", TotalErrors)
-
-		// // if errors is null return []
-		// if TotalErrors == nil {
-		// 	TotalErrors = []interpreter.Error{}
-		// }
-
-		// return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		// 	"result": out,
-		// 	"errors": TotalErrors,
-		// 	"symbol": visitor.TableSymbol,
-		// 	"dot":    dot,
-		// })
+		// if errors is null return []
+		if TotalErrors == nil {
+			TotalErrors = []compiler.Error{}
+		}
 
 		// get the complete code
 		resultString := visitor.Generator.GetFinalCode()
 
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"result": resultString,
+			"errors": TotalErrors,
+			"symbol": visitor.TableSymbol,
 		})
 	}
 }
